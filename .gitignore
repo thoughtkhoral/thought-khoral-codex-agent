@@ -1,0 +1,22 @@
+# Local secrets and runtime history must never be committed.
+.env
+.env.*
+!.env.example
+.codex/
+auth.json
+sessions/
+archived_sessions/
+secrets/
+data/
+*.pem
+*.key
+
+# Build/editor output.
+target/
+dist/
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+.idea/
+.vscode/

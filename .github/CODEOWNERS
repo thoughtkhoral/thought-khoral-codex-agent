@@ -1,0 +1,7 @@
+# Specification and derived documentation review routing.
+# Server-side branch protection is needed to enforce owner approval.
+* @RichNasz
+/.ai/specs/ @RichNasz
+/docs/ @RichNasz
+/LICENSE @RichNasz
+/NOTICE @RichNasz
