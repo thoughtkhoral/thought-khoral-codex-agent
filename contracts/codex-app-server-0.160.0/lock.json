@@ -1,0 +1,14 @@
+{
+  "cliVersion": "0.160.0",
+  "generator": "codex app-server generate-json-schema --out <isolated-dir> (without --experimental)",
+  "source": "https://github.com/openai/codex",
+  "license": "Apache-2.0",
+  "files": {
+    "initialize-response.json": "62ad689c2cb6379913c1d72749cfd8de5089d35760214123518eb92eef11acc9",
+    "schema.json": "81a88c04ae4984b16d73080f4109d0477682bc76c8adbe483e371175ce54c054",
+    "LICENSE": "d17f227e4df5da1600391338865ce0f3055211760a36688f816941d58232d8dc",
+    "NOTICE": "9d71575ecfd9a843fc1677b0efb08053c6ba9fd686a0de1a6f5382fd3c220915"
+  },
+  "licenseSource": "https://github.com/openai/codex/blob/rust-v0.160.0/LICENSE",
+  "noticeSource": "https://github.com/openai/codex/blob/rust-v0.160.0/NOTICE"
+}

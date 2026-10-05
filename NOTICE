@@ -3,3 +3,9 @@ Copyright 2026 ThoughtKhoral contributors
 
 This repository's source and documentation are licensed under the Apache
 License, Version 2.0. See LICENSE for the full license text.
+
+The unmodified generated protocol schemas in contracts/codex-app-server-0.160.0
+come from OpenAI Codex 0.160.0, Copyright 2025 OpenAI, Apache-2.0.
+Its LICENSE and NOTICE are retained in that directory.
+Dependency license declarations and packaged notice hashes are recorded in
+docs/dependency-evidence.json. Runtime image packaging retains their notices.

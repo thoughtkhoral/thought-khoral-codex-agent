@@ -16,6 +16,7 @@ Specifications are the source of truth for implementation and documentation.
   private room contents outside version control and test fixtures.
 - Preserve Apache 2.0 licensing and third-party notices.
 - Run `python3 scripts/check_docs.py` and `git diff --check` before completion.
-  Report verification accurately; this scaffold has no implemented runtime.
+  Report verification accurately; Task 4 supplies a provider-free adapter library,
+  with no worker server or live activation.
 
 Governing specification: [repository foundation](.ai/specs/how/repository-foundation.md).
