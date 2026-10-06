@@ -1,0 +1,2 @@
+# Preserve upstream legal-file bytes and formatting for exact provenance hashes.
+licenses/** -text whitespace=-trailing-space,-space-before-tab

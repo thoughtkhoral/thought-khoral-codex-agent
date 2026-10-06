@@ -252,3 +252,13 @@ The branch remains isolated and unpublished. A2A/SQLite transport, native receip
 reconciliation, packaging and live isolation remain later tasks. The repository
 now contains a provider-free adapter library rather than only a scaffold; no
 Codex service is enabled. Guided workspace/memory remains milestone two.
+
+## Task 5 durable worker checkpoint
+
+The maintainer authorized the next task after the adapter checkpoint. On
+2026-10-06 the isolated `codex-worker-receipts` branch implements the worker-owned
+SQLite/A2A/package unit under issue 1. The root coordinated plan records its
+exact commit/image identity, 37 provider-free tests and independent review with
+no remaining Critical or Important findings. Branch/worktree remain local and
+unpublished. Mediation, UI, opt-in isolation and end-to-end verification remain
+Tasks 6–9. Guided workspace/memory remains milestone two.

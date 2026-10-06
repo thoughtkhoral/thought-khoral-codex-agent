@@ -97,6 +97,9 @@ fn command(config: &Config) -> Command {
         .env("PATH", "/usr/bin:/bin")
         .current_dir(&config.working_directory)
         .kill_on_drop(true);
+    if let Some(provider) = &config.provider {
+        provider.configure(&mut command);
+    }
     #[cfg(unix)]
     command.process_group(0);
     command
@@ -139,7 +142,14 @@ impl AppServer {
         }
         let mut process = command(&config);
         process.args(["app-server", "--listen", "stdio://"]);
-        let overrides = tool_overrides();
+        let mut overrides = tool_overrides();
+        if config.provider.is_some() {
+            overrides["model_provider"] = serde_json::json!("thought_khoral_openai");
+            overrides["model_providers"] = serde_json::json!({"thought_khoral_openai":{
+                "name":"OpenAI", "base_url":"https://api.openai.com/v1", "env_key":"OPENAI_API_KEY",
+                "wire_api":"responses", "requires_openai_auth":false, "supports_websockets":false
+            }});
+        }
         for (key, value) in overrides.as_object().unwrap() {
             process
                 .arg("-c")
@@ -293,6 +303,21 @@ impl AppServer {
         F: FnOnce(String) -> Fut,
         Fut: Future<Output = Result<(), RuntimeError>>,
     {
+        self.execute_with_callbacks(request, barrier, |_, _| async { Ok(()) })
+            .await
+    }
+    pub async fn execute_with_callbacks<F, Fut, T, TurnFut>(
+        &mut self,
+        request: RuntimeRequest,
+        barrier: F,
+        turn_bound: T,
+    ) -> Result<RuntimeOutcome, RuntimeError>
+    where
+        F: FnOnce(String) -> Fut,
+        Fut: Future<Output = Result<(), RuntimeError>>,
+        T: FnOnce(String, String) -> TurnFut,
+        TurnFut: Future<Output = Result<(), RuntimeError>>,
+    {
         if self.used || self.closed {
             return Err(RuntimeError::ConversationInterrupted);
         }
@@ -322,7 +347,7 @@ impl AppServer {
             .min()
             .unwrap();
         let deadline = Instant::now() + remaining.min(self.config.deadline);
-        let result = timeout_at(deadline, self.run(request, barrier)).await;
+        let result = timeout_at(deadline, self.run(request, barrier, turn_bound)).await;
         let outcome = match result {
             Ok(Ok(outcome)) => Ok(outcome),
             Ok(Err(error)) => {
@@ -338,14 +363,17 @@ impl AppServer {
         guard.complete = true;
         outcome
     }
-    async fn run<F, Fut>(
+    async fn run<F, Fut, T, TurnFut>(
         &mut self,
         request: RuntimeRequest,
         barrier: F,
+        turn_bound: T,
     ) -> Result<RuntimeOutcome, RuntimeError>
     where
         F: FnOnce(String) -> Fut,
         Fut: Future<Output = Result<(), RuntimeError>>,
+        T: FnOnce(String, String) -> TurnFut,
+        TurnFut: Future<Output = Result<(), RuntimeError>>,
     {
         self.rpc("initialize",json!({"clientInfo":{"name":"thought-khoral-codex-agent","title":"ThoughtKhoral Codex Agent","version":"0.1.0"},"capabilities":{"experimentalApi":false}}),"InitializeParams","InitializeResponse").await?;
         self.send(&json!({"method":"initialized"})).await?;
@@ -372,7 +400,8 @@ impl AppServer {
                 "ThreadResumeParams",
                 "ThreadResumeResponse",
             )
-            .await?
+            .await
+            .map_err(|_| RuntimeError::SessionUnavailable)?
         } else {
             params["ephemeral"] = json!(false);
             self.rpc(
@@ -423,6 +452,7 @@ impl AppServer {
             return Err(RuntimeError::ExecutionFailed);
         }
         self.turn = Some(turn.clone());
+        turn_bound(thread.clone(), turn.clone()).await?;
         let mut usage = UsageTracker::new(
             thread.clone(),
             turn.clone(),
@@ -580,6 +610,23 @@ impl AppServer {
                 }
                 _ => return Err(RuntimeError::RuntimeUnavailable),
             }
+        }
+    }
+    pub async fn catalog(&mut self) -> Result<Value, RuntimeError> {
+        if self.used || self.closed {
+            return Err(RuntimeError::ConversationInterrupted);
+        }
+        self.used = true;
+        let deadline = self.config.deadline;
+        let request = async {
+            self.rpc("initialize", serde_json::json!({"clientInfo":{"name":"thought-khoral-codex-agent","version":"0.1.0"},"capabilities":{"experimentalApi":false}}),"InitializeParams","InitializeResponse").await?;
+            self.send(&serde_json::json!({"method":"initialized"}))
+                .await?;
+            Ok(self.discover().await?.page())
+        };
+        match timeout(deadline, request).await {
+            Ok(result) => result,
+            Err(_) => Err(RuntimeError::Timeout),
         }
     }
     async fn discover(&mut self) -> Result<Catalog, RuntimeError> {

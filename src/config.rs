@@ -2,6 +2,7 @@
 use std::{ffi::OsString, path::PathBuf, time::Duration};
 #[derive(Clone)]
 pub struct Config {
+    pub provider: Option<std::sync::Arc<ProviderCredentials>>,
     pub executable: PathBuf,
     pub arguments: Vec<OsString>,
     pub working_directory: PathBuf,
@@ -17,6 +18,7 @@ pub struct Config {
 impl Config {
     pub fn new(executable: PathBuf, working_directory: PathBuf, native_home: PathBuf) -> Self {
         Self {
+            provider: None,
             executable,
             arguments: vec![],
             working_directory,
@@ -90,4 +92,61 @@ pub(crate) fn tool_overrides() -> serde_json::Value {
         .map(|name| (name.to_owned(), serde_json::Value::Bool(false)))
         .collect::<serde_json::Map<_, _>>();
     serde_json::json!({"features":features,"web_search":"disabled","mcp_servers":{},"plugins":{},"project_doc_max_bytes":0,"shell_environment_policy":{"inherit":"none"}})
+}
+
+pub struct ProviderCredentials {
+    key: String,
+}
+impl ProviderCredentials {
+    pub fn from_file(path: &std::path::Path) -> Result<Self, crate::protocol::RuntimeError> {
+        let key = read_credential_file(path)?;
+        Ok(Self { key })
+    }
+    pub fn matches(&self, other: &str) -> bool {
+        self.key == other
+    }
+    pub(crate) fn configure(&self, command: &mut tokio::process::Command) {
+        command
+            .env("OPENAI_API_KEY", &self.key)
+            .env(
+                "HTTPS_PROXY",
+                "http://thought-khoral-codex-provider-proxy:3128",
+            )
+            .env(
+                "HTTP_PROXY",
+                "http://thought-khoral-codex-provider-proxy:3128",
+            );
+    }
+    pub(crate) fn appears_in(&self, value: &serde_json::Value) -> bool {
+        match value {
+            serde_json::Value::String(text) => text.contains(&self.key),
+            serde_json::Value::Array(values) => values.iter().any(|value| self.appears_in(value)),
+            serde_json::Value::Object(values) => values
+                .iter()
+                .any(|(key, value)| key.contains(&self.key) || self.appears_in(value)),
+            _ => false,
+        }
+    }
+}
+
+pub fn read_credential_file(
+    path: &std::path::Path,
+) -> Result<String, crate::protocol::RuntimeError> {
+    use crate::protocol::RuntimeError;
+    use std::io::Read;
+    let file = std::fs::File::open(path)?;
+    if !file.metadata()?.is_file() {
+        return Err(RuntimeError::InvalidTaskInput);
+    }
+    let mut bytes = Vec::new();
+    file.take(4097).read_to_end(&mut bytes)?;
+    if bytes.len() > 4096 {
+        return Err(RuntimeError::InvalidTaskInput);
+    }
+    let key = String::from_utf8(bytes).map_err(|_| RuntimeError::InvalidTaskInput)?;
+    let key = key.trim_end_matches(['\r', '\n']).to_owned();
+    if key.len() < 16 || !key.bytes().all(|byte| byte.is_ascii_graphic()) {
+        return Err(RuntimeError::InvalidTaskInput);
+    }
+    Ok(key)
 }

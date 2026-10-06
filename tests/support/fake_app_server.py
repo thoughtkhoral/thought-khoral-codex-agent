@@ -6,6 +6,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--scenario', default='success')
 parser.add_argument('--capture', required=True)
 parser.add_argument('--version', action='store_true')
+parser.add_argument('--persistent', action='store_true')
 args, _ = parser.parse_known_args()
 if args.version:
     print('codex-cli 0.160.0')
@@ -32,7 +33,7 @@ thread_id = 'thread-exact'
 for line in sys.stdin:
     request = json.loads(line)
     with open(args.capture, 'a', encoding='utf-8') as stream:
-        stream.write(json.dumps({'request': request, 'environment': {'operatorSecretPresent': 'TASK4_OPERATOR_SECRET' in os.environ}, 'pid': os.getpid()}) + '\n')
+        stream.write(json.dumps({'request': request, 'environment': {'operatorSecretPresent': 'TASK4_OPERATOR_SECRET' in os.environ, 'hasProviderKey': 'OPENAI_API_KEY' in os.environ}, 'pid': os.getpid()}) + '\n')
     method = request['method']
     params = request.get('params', {})
     if method == 'initialize':
@@ -56,6 +57,16 @@ for line in sys.stdin:
                     next_cursor = 'page-two'
             response(request, {'data': data, 'nextCursor': next_cursor})
         elif method in ('thread/start', 'thread/resume'):
+            if args.persistent:
+                from pathlib import Path
+                storage = Path(os.environ['CODEX_HOME']) / 'sessions'
+                storage.mkdir(exist_ok=True)
+                if method == 'thread/start':
+                    thread_id = 'thread-' + str(os.getpid())
+                    (storage / (thread_id + '.jsonl')).write_text('synthetic native history')
+                elif not (storage / (params['threadId'] + '.jsonl')).is_file():
+                    emit({'id':request['id'],'error':{'code':-32000,'message':'synthetic missing native file'}})
+                    continue
             if method == 'thread/resume':
                 thread_id = params['threadId']
             thread = {'id': thread_id, 'cliVersion': '0.160.0', 'createdAt': 1, 'updatedAt': 1, 'cwd': params['cwd'], 'ephemeral': False, 'modelProvider': 'openai', 'preview': '', 'projectId': None, 'sessionId': 'synthetic-session', 'source': 'appServer', 'status': {'type': 'idle'}, 'turns': []}
@@ -63,6 +74,9 @@ for line in sys.stdin:
         elif method == 'turn/start':
             if args.scenario == 'rpc_wrong_id':
                 emit({'id': 999, 'result': {'turn': turn()}})
+                continue
+            if args.scenario == 'provider_denied':
+                emit({'id':request['id'],'error':{'code':-32000,'message':'synthetic provider denial'}})
                 continue
             response(request, {'turn': turn()})
             if args.scenario in ('hang', 'ignore_interrupt', 'descendant'):
@@ -100,6 +114,8 @@ for line in sys.stdin:
                 message = {'id': 'final-1', 'type': 'agentMessage', 'text': 'Maya proposed green.'}
                 if args.scenario != 'phase_missing':
                     message['phase'] = 'final_answer'
+                if args.scenario == 'key_echo':
+                    message['text'] = os.environ.get('OPENAI_API_KEY','missing-provider-key')
                 if args.scenario == 'text_overflow':
                     message['text'] = 'é' * 32769
                 note('item/completed', {**notify, 'item': message})
@@ -124,6 +140,9 @@ for line in sys.stdin:
             final = turn(status)
             if status == 'failed':
                 final['error'] = {'message': 'Synthetic failure', 'additionalDetails': None, 'codexErrorInfo': None}
+            if args.scenario == 'delayed_success':
+                import time
+                time.sleep(0.5)
             note('turn/completed', {'threadId': bound, 'turn': final})
         elif method == 'turn/interrupt':
             assert params == {'threadId': thread_id, 'turnId': 'turn-exact'}

@@ -6,13 +6,13 @@ gateway; it does not access room storage directly.
 
 ## Status
 
-**Provider-free adapter library implemented (Task 4).** Governance, approved
-specifications and Apache 2.0 licensing are established. The independent library
-wraps the pinned CLI protocol, validates authorized context, discovers model/effort
-options and normalizes replies/settings/usage. Deterministic external-process tests
-exercise its submission barrier and lifecycle. See [adapter verification](docs/adapter.md).
-Durable receipts, authenticated worker transport and platform activation remain
-later tasks. No provider access or live isolation verification has occurred.
+**Provider-free worker implemented (Tasks 4–5).** The independent library wraps
+the pinned CLI protocol and validates context, model/effort and normalized output.
+The worker adds durable receipts, acknowledgement/recovery, authenticated A2A/card/
+control routes, bounded concurrency and independently pinned image packaging.
+See [adapter](docs/adapter.md) and [worker runtime](docs/runtime.md).
+Platform mediation, activation and end-to-end verification remain later tasks.
+No provider access or live isolation verification has occurred.
 
 The milestone-one specifications and coordinated plan were approved on 2026-10-05
 under [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1).
@@ -47,7 +47,7 @@ git diff --check
 
 CI runs the documentation check on pushes and pull requests.
 The [adapter guide](docs/adapter.md) documents local Cargo/fake-process checks.
-Runtime CI and independent worker packaging belong to Task 5.
+[Runtime CI](.github/workflows/runtime.yml) runs provider-free tests and image checks.
 
 ## Compatibility boundary
 

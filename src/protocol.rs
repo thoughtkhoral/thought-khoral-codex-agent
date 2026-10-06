@@ -59,6 +59,10 @@ pub struct RuntimeOutcome {
 static PROFILE: LazyLock<HashMap<&'static str, jsonschema::Validator>> = LazyLock::new(|| {
     let schemas = [
         (
+            "ack",
+            include_str!("../contracts/agent-conversation-v1/schemas/ack.schema.json"),
+        ),
+        (
             "input",
             include_str!("../contracts/agent-conversation-v1/schemas/input.schema.json"),
         ),

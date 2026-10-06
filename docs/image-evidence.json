@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-06",
+  "localImage": "localhost/thought-khoral-codex-agent:task5",
+  "imageId": "sha256:ec1591d137c2203c2f994d4ba9ea9b5a420ba3b9948b8a32665355fad76c893e",
+  "architecture": "arm64",
+  "user": "10003:10003",
+  "workingDirectory": "/opt/thought-khoral-codex/workspace",
+  "codexVersion": "codex-cli 0.160.0",
+  "codexArm64MuslArchiveSha256": "883620139925f677e5a12c95ba87a1d7f421388ebb797b1c10aba42a04ede9d7",
+  "codexX86_64MuslArchiveSha256": "306865417d4ee7a927785852910a527f41e1e159add390ac5ae3accb67d44a13",
+  "schemaSha256": "81a88c04ae4984b16d73080f4109d0477682bc76c8adbe483e371175ce54c054",
+  "initializeResponseSha256": "62ad689c2cb6379913c1d72749cfd8de5089d35760214123518eb92eef11acc9",
+  "checks": [
+    "ARM64 independent build with archive/version/both generated schema checks",
+    "read-only network-none package verification succeeded",
+    "service without required trusted activation configuration exited 1 before inference"
+  ],
+  "notExercised": [
+    "x86_64 image execution",
+    "live inference",
+    "Task 8 tool/egress isolation",
+    "Rust 1.85 minimum"
+  ],
+  "published": false
+}

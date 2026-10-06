@@ -7,8 +7,9 @@ rule, replacement, rationale, scope, approval, and consequences.
 
 The repository foundation is approved by the user's setup request on
 2026-10-02. Milestone-one runtime specifications and the coordinated plan were approved
-on 2026-10-05 under [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1). Task 4 implements the provider-free app-server adapter library. Durable worker
-transport, end-to-end integration and production deployment remain unimplemented.
+on 2026-10-05 under [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1). Tasks 4–5 implement the provider-free adapter, durable worker transport and
+independent packaging. End-to-end integration and production deployment remain
+unimplemented. The local Task 5 branch is `codex-worker-receipts`.
 
 ## Approved foundation
 

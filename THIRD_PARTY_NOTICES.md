@@ -13,11 +13,17 @@ compatibility artifacts owned by ThoughtKhoral contracts. Their immutable
 commit, archive digest and individual file hashes are in
 [the profile lock](contracts/agent-conversation-v1/lock.json).
 
-[Dependency evidence](docs/dependency-evidence.json) records all 139 locked
-registry packages, SPDX declarations, selected permissive license alternatives,
-crate checksums and available packaged legal-file hashes. Packages carrying
-Unicode-3.0, MIT-0 and Zlib terms retain those terms. No A2A client, gateway
-implementation or SQLx is included in this library unit. Task 5 must package
-applicable dependency licenses/copyright notices with any distributed binary
-or image. This source deliverable does not include third-party crate sources
-or a Codex executable.
+[Dependency evidence](docs/dependency-evidence.json) records all 275 locked
+registry packages, declarations, selected license alternatives, crate checksums,
+legal provenance and retained text hashes. [Legal texts](licenses/) are copied
+into the independent image. AND obligations and upstream copyright notices
+are retained; for r-efi the upstream AUTHORS and standard Apache terms accompany
+the declared Apache alternative. Build-only and inactive-target notices are
+included conservatively. A2A server interfaces and published types are reused;
+no gateway implementation or patched client is copied.
+
+The image includes the unmodified, checksum-verified Codex CLI 0.160.0 release
+binary. Codex LICENSE/NOTICE and the MIT license from its checksum-verified
+Ratatui 0.30.2 crate are retained in the image. Debian package copyright files
+remain with the runtime base. Run `python3 scripts/check_dependency_notices.py`
+when verifying or changing dependencies.

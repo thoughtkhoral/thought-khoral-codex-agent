@@ -1,0 +1,13 @@
+.git
+.codex
+.agents
+target
+secrets
+data
+sessions
+archived_sessions
+.env
+.env.*
+*.sqlite*
+*.owner
+__pycache__

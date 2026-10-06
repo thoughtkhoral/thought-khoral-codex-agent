@@ -480,3 +480,34 @@ no-tool/read-only/never-approve requests are verified at the process boundary;
 no live isolation, end-to-end interoperability or production readiness is
 claimed. Task 5 owns durable receipts, authenticated worker transport and
 packaging. Provider access, publication and activation remain separate gates.
+
+## Task 5 worker execution checkpoint — 2026-10-06
+
+The authorized worker unit adds SQLite mapping/receipts and broker acknowledgements,
+four process slots, scoped concurrency, authenticated A2A/card/control transport,
+expiry/cancellation and independent pinned packaging. Its synthetic subprocess
+and real-SQLite suite has 37 passing tests: the 21 adapter tests plus 12 receipt
+and four HTTP tests. The root plan records the exact isolated local commit and
+image identity. Rust/Cargo 1.93.1 was exercised; the declared 1.85 minimum was not.
+
+Review regressions reproduced and fixed cancellation during a blocked completion
+write, native replies duplicated as transcript text, missing native bindings and
+policy rollback. Missing expected bindings and invalidating policy changes
+persist invalidation and require explicit new. A terminal mutex is acquired after
+SQLite writes and immediately before the final authority check/commit; cancellation
+can win while persistence waits, and completion wins once final commit begins.
+Processes can close after durable completion while broker acknowledgement is
+pending; native history remains private and continuation stays blocked.
+
+The admitted A2A server handler interface/native types are reused with an Axum
+JSON-RPC wrapper that preserves canonical integer types. The stock protobuf
+router coerces integers into floats and is unsuitable for exact profile packets.
+This is a transport implementation detail, not a cross-repository contract change.
+
+Formatting, Clippy, exact 139 profile/native files, 477 retained legal texts for
+275 locked crates, documentation and root governance checks pass. Independent
+review has no remaining Critical or Important findings. ARM64 image build and
+network-disabled/read-only package check verify the pinned Codex release, schema
+and UID/GID 10003; unconfigured service startup is rejected. x86_64 CI is defined
+but has not been executed locally. No provider inference, deployment activation,
+merge or publication occurred; Tasks 6–9 own the remaining integration gates.
