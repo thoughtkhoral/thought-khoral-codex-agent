@@ -9,8 +9,10 @@ async fn real_process_requests_are_ordered_explicit_and_deliver_one_trigger() {
     let fixture = Fixture::new("success");
     let mut server = AppServer::spawn(fixture.config.clone()).await.unwrap();
     let barrier = fixture.directory.path().join("submission-intent");
+    let mut input = request();
+    input.packet["leaseExpiresAt"] = input.packet["expiresAt"].clone();
     let outcome = server
-        .execute(request(), |thread| async {
+        .execute(input, |thread| async {
             assert_eq!(thread, "thread-exact");
             std::fs::write(&barrier, thread).unwrap();
             Ok(())
@@ -317,6 +319,22 @@ async fn unavailable_effort_is_never_presented_as_runtime_confirmation() {
         .reply;
     assert_eq!(reply["effectiveSettings"]["confirmation"], "unconfirmed");
     assert!(reply["effectiveSettings"]["reasoningEffort"].is_null());
+    server.close().await.unwrap();
+}
+#[tokio::test]
+async fn packet_deadline_cannot_outlive_a_still_live_lease() {
+    let fixture = Fixture::new("success");
+    let mut input = request();
+    input.packet["leaseExpiresAt"] = json!(chrono::Utc::now() + chrono::Duration::seconds(60));
+    let mut server = AppServer::spawn(fixture.config.clone()).await.unwrap();
+    assert_eq!(
+        server
+            .execute(input, |_| async { Ok(()) })
+            .await
+            .unwrap_err(),
+        RuntimeError::InvalidTaskInput
+    );
+    assert!(fixture.records().is_empty());
     server.close().await.unwrap();
 }
 #[tokio::test]

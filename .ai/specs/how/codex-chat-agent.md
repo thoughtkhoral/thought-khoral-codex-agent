@@ -538,3 +538,8 @@ Its pinned CLI/archive/schema checks and network-none/read-only package check
 pass. Unconfigured startup exits 1 before inference. Original Task 5 source and
 image remain historical checkpoints; no provider use, activation or publication
 was performed. Detailed package evidence is in `docs/image-evidence.json`.
+
+Task 6 profile review also enforces `expiresAt <= leaseExpiresAt`, alongside the
+authorization deadline and 180-second packet bound, before any app-server protocol
+request. A still-live lease ending before the packet deadline is invalid input;
+equality remains accepted. This implements the approved published wire annex.

@@ -225,7 +225,12 @@ pub fn validate_request(request: &RuntimeRequest, guidance: &str) -> Result<(), 
     if end <= Utc::now() || auth <= Utc::now() || lease <= Utc::now() {
         return Err(RuntimeError::AuthenticationRequired);
     }
-    if end <= issued || (end - issued).num_milliseconds() > 180_000 || end > auth || lease > auth {
+    if end <= issued
+        || (end - issued).num_milliseconds() > 180_000
+        || end > auth
+        || end > lease
+        || lease > auth
+    {
         return Err(RuntimeError::InvalidTaskInput);
     }
     let new = p["conversation"]["mode"] == "new";
