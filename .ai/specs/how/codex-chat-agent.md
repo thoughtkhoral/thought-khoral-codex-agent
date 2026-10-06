@@ -511,3 +511,19 @@ network-disabled/read-only package check verify the pinned Codex release, schema
 and UID/GID 10003; unconfigured service startup is rejected. x86_64 CI is defined
 but has not been executed locally. No provider inference, deployment activation,
 merge or publication occurred; Tasks 6–9 own the remaining integration gates.
+
+## Task 6 approved-profile transport correction — 2026-10-06
+
+The approved contracts profile requires a closed A2A input DataPart envelope
+`{profileVersion, packet: TaskInput}` and completed artifact
+`{reply: InternalReply, runtimeBinding: {threadId, turnId}}`. Matching task/context
+IDs derive from the inner packet. Bare packets, extra envelope fields and wrong
+profiles fail before inference. Worker.execute continues to return InternalReply.
+The authenticated receipt projection adds runtimeBinding from committed native
+thread/turn columns only for completed receipts, otherwise null. GetTask and
+CancelTask replay the same bound completed artifact. The mediator compares this
+private binding with its durable worker receipt; only InternalReply reaches the
+broker/browser. Native identifiers are worker/mediator-private; no native session
+files or credentials are returned. Provider-key echoes in identifiers are rejected
+before persisting those identifiers. This corrects Task 5 transport implementation
+to the already approved profile without adding routes or provider activation.

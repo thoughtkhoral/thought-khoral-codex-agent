@@ -367,8 +367,19 @@ impl ReceiptStore {
                 .map(|v| serde_json::from_str(&v).map_err(|_| WorkerError::RuntimeUnavailable))
                 .transpose()
         };
+        let phase = get(&r, "phase")?;
+        let runtime_binding = if phase == "completed" {
+            let thread = get(&r, "thread_id")?;
+            let turn = get(&r, "turn_id")?;
+            if thread.is_empty() || turn.is_empty() {
+                return Err(WorkerError::RuntimeUnavailable);
+            }
+            json!({"threadId":thread,"turnId":turn})
+        } else {
+            Value::Null
+        };
         Ok(
-            json!({"taskId":task,"conversationId":get(&r,"conversation_id")?,"generation":r.try_get::<i64,_>("generation")?,"phase":get(&r,"phase")?,"result":decode("result")?,"acknowledgement":decode("ack")?,"error":r.try_get::<Option<String>,_>("error_code")?}),
+            json!({"runtimeBinding":runtime_binding,"taskId":task,"conversationId":get(&r,"conversation_id")?,"generation":r.try_get::<i64,_>("generation")?,"phase":get(&r,"phase")?,"result":decode("result")?,"acknowledgement":decode("ack")?,"error":r.try_get::<Option<String>,_>("error_code")?}),
         )
     }
     pub async fn acknowledge(&self, task: &str, ack: &Value) -> Result<(), WorkerError> {

@@ -123,7 +123,14 @@ fn invocation(value: &Value) -> Result<(), WorkerError> {
             if parts.len() != 1 || !closed(&parts[0], &["data"]) {
                 return Err(WorkerError::InvalidTaskInput);
             }
-            let packet = &parts[0]["data"];
+            let envelope = &parts[0]["data"];
+            if !closed(envelope, &["profileVersion", "packet"])
+                || envelope["profileVersion"] != PROFILE_VERSION
+                || envelope.get("packet").is_none()
+            {
+                return Err(WorkerError::InvalidTaskInput);
+            }
+            let packet = &envelope["packet"];
             if message["taskId"] != packet["taskId"]
                 || message["contextId"] != packet["conversation"]["id"]
             {
@@ -174,7 +181,7 @@ async fn guard(State(state): State<ServiceState>, request: Request, next: Next) 
         };
         if parts.uri.path() == "/" {
             let within_admission = crate::protocol::timestamp(
-                &value["params"]["message"]["parts"][0]["data"]["expiresAt"],
+                &value["params"]["message"]["parts"][0]["data"]["packet"]["expiresAt"],
             )
             .is_ok_and(|expiry| expiry <= state.config.expires);
             let validation = invocation(&value).and_then(|()| {
@@ -305,7 +312,9 @@ fn task(receipt: Value) -> Task {
                 artifact_id: "reply".into(),
                 name: None,
                 description: None,
-                parts: vec![Part::data(result)],
+                parts: vec![Part::data(
+                    json!({"reply":result,"runtimeBinding":receipt["runtimeBinding"]}),
+                )],
                 metadata: None,
                 extensions: None,
             }]
@@ -329,7 +338,7 @@ impl RequestHandler for Handler {
                 PartContent::Data(value) => Some(value),
                 _ => None,
             })
-            .ok_or_else(|| A2AError::invalid_request("invalid_task_input"))?
+            .ok_or_else(|| A2AError::invalid_request("invalid_task_input"))?["packet"]
             .clone();
         let id = packet["taskId"]
             .as_str()

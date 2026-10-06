@@ -9,7 +9,9 @@ The repository foundation is approved by the user's setup request on
 2026-10-02. Milestone-one runtime specifications and the coordinated plan were approved
 on 2026-10-05 under [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1). Tasks 4–5 implement the provider-free adapter, durable worker transport and
 independent packaging. End-to-end integration and production deployment remain
-unimplemented. The local Task 5 branch is `codex-worker-receipts`.
+unimplemented. The local Task 5 branch is `codex-worker-receipts`. Task 6 corrects the private
+A2A envelope and committed runtime binding on `codex-worker-transport-contract`,
+as recorded in the [runtime design](how/codex-chat-agent.md).
 
 ## Approved foundation
 

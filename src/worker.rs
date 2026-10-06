@@ -222,10 +222,12 @@ impl Worker {
         let store = self.inner.store.clone();
         let turn_store = store.clone();
         let turn_task = task.clone();
+        let thread_provider = self.inner.config.provider.clone();
+        let turn_provider = thread_provider.clone();
         let result = tokio::select! {
          biased;
          _=token.cancelled()=>Err(WorkerError::ConversationInterrupted),
-         result=server.execute_with_callbacks(RuntimeRequest{packet:packet.clone(),thread_id:thread_id.clone()},move |thread|async move {store.submission_intent(&task,&thread).await.map_err(WorkerError::runtime)},move |thread,turn|async move{turn_store.bind_turn(&turn_task,&thread,&turn).await.map_err(WorkerError::runtime)})=>result.map_err(WorkerError::from),
+         result=server.execute_with_callbacks(RuntimeRequest{packet:packet.clone(),thread_id:thread_id.clone()},move |thread|async move { if thread_provider.as_ref().is_some_and(|p|p.appears_in(&serde_json::json!(thread))) {return Err(RuntimeError::ExecutionFailed)} store.submission_intent(&task,&thread).await.map_err(WorkerError::runtime)},move |thread,turn|async move{ if turn_provider.as_ref().is_some_and(|p|p.appears_in(&serde_json::json!({"threadId":thread,"turnId":turn}))) {return Err(RuntimeError::ExecutionFailed)} turn_store.bind_turn(&turn_task,&thread,&turn).await.map_err(WorkerError::runtime)})=>result.map_err(WorkerError::from),
         };
         server.close().await?;
         let outcome = result?;
@@ -238,7 +240,7 @@ impl Worker {
             .config
             .provider
             .as_ref()
-            .is_some_and(|provider| provider.appears_in(&outcome.reply))
+            .is_some_and(|provider| provider.appears_in(&serde_json::json!({"reply":outcome.reply,"runtimeBinding":{"threadId":outcome.thread_id,"turnId":outcome.turn_id}})))
         {
             return Err(WorkerError::ExecutionFailed);
         }

@@ -44,16 +44,24 @@ published server's protobuf JSON conversion changes integer values to floats, so
 its router cannot transport canonical profile packets unchanged.
 
 Only `SendMessage`, `GetTask` and `CancelTask` are supported. A send carries exactly
-one DataPart containing the pinned InternalTask, with matching task/context IDs.
+one DataPart containing the closed `{profileVersion, packet: TaskInput}` envelope,
+with task/context IDs matching the inner packet. Bare packets, unknown envelope
+fields and mismatched profile versions are rejected before inference.
 Files, artifact URLs, extra parts, tools, handoffs, unsupported configuration and
 query parameters fail closed. Streaming and push notifications are not advertised.
-A completed A2A task has one normalized InternalReply artifact; no native thread,
-turn or session file is returned. Errors expose stable safe codes.
+A completed A2A task has one closed `{reply: InternalReply, runtimeBinding:
+{threadId, turnId}}` artifact, derived from its committed receipt. Get and cancel
+return the same bound completed artifact. Native identifiers are private to the
+worker and mediator; the mediator compares them against the worker receipt and
+forwards only the normalized reply to the broker/browser. Session files and
+credentials are never returned. Errors expose stable safe codes.
 
 Authenticated `GET /control/v1/models` returns the entire admitted catalog in one
 bounded page (maximum 100 model options); `nextCursor` is null. The adapter still
 validates every native catalog page. `GET /control/v1/receipts/{taskId}` returns a
-safe durable receipt projection. `POST /control/v1/receipts/{taskId}/ack` validates
+closed durable receipt projection with taskId, conversationId, generation, phase,
+result (normalized reply), acknowledgement, error and runtimeBinding. The binding
+is `{threadId, turnId}` only when completed, otherwise null. `POST /control/v1/receipts/{taskId}/ack` validates
 the closed acknowledgement profile and returns 204. HTTP waiter disconnection does
 not cancel owned work; explicit cancellation, authority deadlines and shutdown do.
 
@@ -82,8 +90,8 @@ fixed custom OpenAI Responses provider, environment key and the dedicated
 `thought-khoral-codex-provider-proxy:3128`; arbitrary provider endpoints are not
 accepted. See official [configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference).
 The invocation credential is hashed in the HTTP service and never forwarded into
-Codex. Subprocess environments are cleared. Replies/catalogs containing the exact
-provider key are rejected before output or durable success. Shutdown cancels active
+Codex. Subprocess environments are cleared. Replies/catalogs and private runtime bindings containing the exact provider key
+are rejected before output or persistence. Shutdown cancels active
 turns, closes their process groups and waits for reaping. Task 8 must verify real
 network/tool isolation and read-only mounts before activation.
 
