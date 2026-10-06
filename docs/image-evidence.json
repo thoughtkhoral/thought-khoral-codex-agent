@@ -1,7 +1,7 @@
 {
   "date": "2026-10-06",
-  "localImage": "localhost/thought-khoral-codex-agent:task6-transport",
-  "imageId": "sha256:c3951b12e58154f289c6554fe27768c315001c48b1dfdec13791423736966eae",
+  "localImage": "localhost/thought-khoral-codex-agent:task6-final",
+  "imageId": "sha256:95145520f4249ac1e843c0f13a817e0c42cfc578735abef5fa7b760333596a1b",
   "architecture": "arm64",
   "user": "10003:10003",
   "workingDirectory": "/opt/thought-khoral-codex/workspace",
@@ -26,5 +26,10 @@
     "localImage": "localhost/thought-khoral-codex-agent:task5",
     "imageId": "sha256:ec1591d137c2203c2f994d4ba9ea9b5a420ba3b9948b8a32665355fad76c893e"
   },
-  "runtimeSourceRevision": "6a0c03548053d6ad21958a1c2f8c442ae777d35c"
+  "runtimeSourceRevision": "9dfc90189526bdc63bd1be8c189da2b665f3387f",
+  "previousTask6TransportImage": {
+    "localImage": "localhost/thought-khoral-codex-agent:task6-transport",
+    "imageId": "sha256:c3951b12e58154f289c6554fe27768c315001c48b1dfdec13791423736966eae",
+    "runtimeSourceRevision": "6a0c03548053d6ad21958a1c2f8c442ae777d35c"
+  }
 }

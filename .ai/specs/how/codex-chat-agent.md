@@ -543,3 +543,12 @@ Task 6 profile review also enforces `expiresAt <= leaseExpiresAt`, alongside the
 authorization deadline and 180-second packet bound, before any app-server protocol
 request. A still-live lease ending before the packet deadline is invalid input;
 equality remains accepted. This implements the approved published wire annex.
+
+The final lease-guard source is `9dfc90189526bdc63bd1be8c189da2b665f3387f`.
+Independent scoped review and all 39 provider-free tests pass. The final rebuilt
+ARM64 image is
+`sha256:95145520f4249ac1e843c0f13a817e0c42cfc578735abef5fa7b760333596a1b`,
+superseding the earlier Task 6 transport image above. Archive/version/both schema
+checks and network-none/read-only package verification pass; unconfigured startup
+exits 1 before inference. Detailed evidence preserves both earlier image identities.
+No provider use, service activation or publication occurred.
