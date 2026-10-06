@@ -105,8 +105,8 @@ python3 scripts/check_contract_pins.py
 python3 scripts/check_dependency_notices.py
 python3 scripts/check_docs.py
 git diff --check
-podman build -f Containerfile -t localhost/thought-khoral-codex-agent:task5 .
-podman run --rm --network none --read-only localhost/thought-khoral-codex-agent:task5 --verify-package
+podman build -f Containerfile -t localhost/thought-khoral-codex-agent:task6-transport .
+podman run --rm --network none --read-only localhost/thought-khoral-codex-agent:task6-transport --verify-package
 ```
 
 The package check only prints the pinned CLI version and verifies UID/GID. CI runs
@@ -117,7 +117,7 @@ ARM64 was exercised locally; x86_64 packaging is covered by the CI definition an
 still requires its own successful run. Rust 1.93.1 was exercised; the declared
 1.85 minimum was not directly tested.
 
-The 2026-10-06 checkpoint records 37 passing provider-free tests and independent
+The 2026-10-06 checkpoint records 38 passing provider-free tests and independent
 review with no remaining blocking findings. [Image evidence](image-evidence.json)
 records the ARM64 local image identity and exact checked release/schema hashes.
 Overlapping builds exposed overly short fixture deadlines; worker fixtures now

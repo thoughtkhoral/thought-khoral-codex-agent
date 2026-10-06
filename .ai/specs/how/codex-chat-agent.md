@@ -527,3 +527,14 @@ broker/browser. Native identifiers are worker/mediator-private; no native sessio
 files or credentials are returned. Provider-key echoes in identifiers are rejected
 before persisting those identifiers. This corrects Task 5 transport implementation
 to the already approved profile without adding routes or provider activation.
+
+The corrected transport source is committed locally at
+`6a0c03548053d6ad21958a1c2f8c442ae777d35c` on
+`codex-worker-transport-contract`. Independent read-only review found no blockers;
+38 existing tests and six service tests in an independent regression copy pass.
+The rebuilt ARM64 image is
+`sha256:c3951b12e58154f289c6554fe27768c315001c48b1dfdec13791423736966eae`.
+Its pinned CLI/archive/schema checks and network-none/read-only package check
+pass. Unconfigured startup exits 1 before inference. Original Task 5 source and
+image remain historical checkpoints; no provider use, activation or publication
+was performed. Detailed package evidence is in `docs/image-evidence.json`.
