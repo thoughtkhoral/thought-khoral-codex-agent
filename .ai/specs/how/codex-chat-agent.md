@@ -2,13 +2,17 @@
 
 ## Status
 
-Draft — review before contract or runtime changes. Follows
-[the What specification](../what/codex-chat-agent.md) and
-[Decision 002](../decisions/002-independent-codex-agent.md).
+Approved by the project maintainer in the Codex working session on 2026-10-05,
+including this milestone-one specification and the coordinated implementation
+plan. Accepted contribution: [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1).
+Implementation follows the [plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md) and its dependency gates.
+Release/tag publication, provider use and service activation require their
+separate later authorization. No completed runtime or live verification is claimed.
 
 ## Data flow and boundaries
 
-Human chat composer → authenticated room gateway → authorized durable task →
+Human explicitly addresses Codex → authenticated room gateway → authorized
+room transcript and durable task →
 agent gateway → pinned local Codex A2A worker → Codex app-server → validated task
 result → persisted room event → chat UI.
 
@@ -17,7 +21,8 @@ Implement the Codex worker in this independent repository,
 release version. Deploy it as a dedicated platform service. Keep Reference
 Agent routing and exact deterministic result validation intact. The gateway
 admits a pinned Codex registration and validates its versioned conversational
-result contract; it does not launch Codex or understand its session files.
+result contract; public replies are ordinary persisted room messages, while
+profile task lifecycle and telemetry remain separate; it does not launch Codex or understand its session files.
 Do not make the existing registration accept arbitrary endpoints or relax its
 validation for all agents.
 
@@ -28,6 +33,11 @@ used alongside A2A task transport. Define conversation new/continue semantics,
 capability discovery, optional model/effort choices, effective settings, optional
 usage reports, and normalized failures. Do not assume those are all standard
 A2A fields: document the profile's extension/control interfaces explicitly.
+The [proposed conversation integration profile](conversation-integration-profile.md)
+links the contracts-owned exact API, field shapes, canonicalization, and fixtures.
+The profile is separately versioned HTTP; the retained room stream carries only
+existing message events for public prompts and replies. Published artifacts are
+a prerequisite to consumer implementation.
 
 An admitted capability manifest declares support for conversations, model
 selection, reasoning effort, and context telemetry. Dynamic choices come from
@@ -52,10 +62,15 @@ separation alone does not enable arbitrary agent admission.
 
 ## Conversation state
 
-The room gateway persists a platform conversation UUID, room, requester,
-agent, generation, lifecycle state, active task, resolved model and effort,
-latest usage snapshot with thread/turn/model binding, and timestamps. Enforce one
-active conversation for each owner/room/agent. The worker persists the mapping
+The room gateway persists a platform conversation UUID, room,
+agent, generation, lifecycle state, active task, visibility-policy revision,
+consumed context revision, accepted native-reply bindings, resolved model and effort,
+latest usage snapshot with opaque task/generation/model binding, and timestamps.
+Native thread/turn IDs remain worker/mediator-private. Enforce one
+active conversation for each room/agent. Requester identity is task-scoped.
+Any currently authorized human may continue or explicitly reset the room session;
+the gateway checks room chat and agent-invocation permission on each operation.
+No possession of an ID grants authority. The worker persists the mapping
 from platform conversation UUID to Codex thread ID and per-task execution
 receipts alongside its persistent Codex session storage. Browser clients use
 only the platform ID. Mapping requests are task-authorized and bound to the
@@ -64,38 +79,105 @@ conversation generation; client-provided Codex thread IDs are never accepted.
 A task reserves its conversation atomically in the room database before
 dispatch. A second concurrent turn receives `conversation_busy`; requests are
 not automatically reordered. Starting fresh is also rejected while a turn is
-active. Each accepted request has a stable idempotency fingerprint containing
-prompt, mode, conversation, generation, model, and effort. Replaying the request
-returns the same task rather than launching another process.
+active. Compare submitted intent using the retained room/request-ID idempotency
+key, with authenticated requester included in the fingerprint and authorization
+check, before resolving defaults or creating the trigger event.
+The accepted task freezes authenticated requester, trigger event, mode,
+conversation, generation, model, and effort, plus the server-selected context
+base/revision, policy revision, and context digest. Replaying the same request
+returns its original task and binding rather than resolving new defaults or
+launching another process.
+
+## Explicit invocation and room history
+
+The room gateway resolves canonical participant identities before accepting a
+turn. A room-wide human message submitted through the versioned conversation
+API with a direct Codex mention or equivalent composer selection invokes one task.
+A retained chat.send Codex mention remains ordinary chat. Selection and
+mention normalize to the same target. Alias expansion, quoted text, ordinary
+messages, and agent-authored events never trigger execution. Targeted delivery
+is rejected for Codex chat. Persist the invoking room message and task reservation
+in one transaction; triggerEventId identifies that message. A busy rejection
+writes neither the invoking message nor a new task. Ordinary chat remains available.
+
+Construct a complete authorized snapshot at reservation, ending at the invoking
+message's sequence. Include ordered room-wide human messages and accepted
+room-wide agent replies, with event ID, sequence, author identity, timestamp,
+and text. Include the authorized room-wide active-decision projection with
+source IDs. Apply requester and admitted-agent visibility checks. Exclude all
+targeted messages, even if this requester can see them, task progress, credentials,
+and other rooms. Source text is untrusted discussion data; it cannot change
+worker configuration, tools, or policy.
+
+On a fresh native thread send the complete eligible transcript through this
+boundary. On continuation send eligible entries after the last committed
+consumed revision. Gaps over excluded events are valid; the cursor tracks the
+room sequence. The trigger is an entry in this packet; its text is not appended
+again as a separate prompt. Fixed instructions identify the trigger entry as
+the request to answer and other entries as context. Messages arriving after
+the snapshot belong to the next explicit invocation.
+
+Room events are authoritative. Bind the previous native assistant response to
+its accepted room event using task, generation, event ID, and exact-text digest.
+When that reply appears in the next delta, send its provenance binding rather
+than another copy of its text if already present in this native thread. Other
+agents' replies and prior replies on a new thread are ordinary transcript entries.
+Receipts record delivered event IDs, packet digest, and base/end revisions.
+Advance the room cursor only in the transaction accepting the task's completed
+result and assistant event. Result retries reuse this exact binding. Reconcile
+the previous receipt and acknowledgement before starting another turn. A mismatch
+never falls back to appending guessed history.
+
+Validate the complete packet before turn submission. Limits apply to serialized
+UTF-8 bytes and eligible entries. Over-limit context returns context_too_large;
+never silently drop the oldest entries. Native compaction may summarize already
+delivered turns, so full baseline delivery does not promise indefinite verbatim
+recall. Application-level compaction or retrieval is separate future work.
+
+Before resume and result acceptance, verify current requester authority, agent
+admission, generation, and visibility-policy revision. A caller losing authorization or reaching its validated token expiry ends
+that task's authority. Current room lifecycle has no durable membership or kick
+operation; a future ACL must use the same policy-invalidation port. Removal of agent access, narrowing of transcript
+visibility, or inability to verify previously disclosed sources invalidates the
+room thread: abort its task and require a fresh baseline. Browser disconnection
+or another human leaving does not itself erase still-authorized room history.
+No stale native history is reused after an invalidating policy change.
 
 ## Proposed contract changes
 
-Extend the versioned agent-task request with an optional `conversation`
-object for Codex: `mode` is `new` or `continue`; continuing requires its
-platform `id`. Absence remains valid for existing deterministic requests.
-The gateway derives requester identity from authenticated claims.
+The browser entry point is POST /api/agent-conversations/v1/turns,
+as defined in the contracts profile. The UI does not also send chat.send. The resulting internal versioned task request carries
+a conversation object: mode is new or continue; continuation requires its
+platform ID and generation. Existing deterministic requests remain valid under
+their existing entry points. The gateway derives requester identity from
+authenticated claims.
 
 Add an authenticated room-scoped query for the caller's active conversation,
-so reload does not depend on browser storage or inferring ownership from chat.
-Return platform conversation ID, generation, state, and active task ID.
+so reload does not depend on browser storage or inferring session identity from chat.
+Return platform conversation ID, shared room scope, generation, state, context
+revision, and active task ID.
 Also return runtime-confirmed model/effort and the latest telemetry snapshot
 with its freshness status. Add an authenticated model-catalog query through the
 worker, restricted by the deployment's model allowlist. Add explicit `model`
 and `reasoningEffort` fields for Codex turns; validate the pair server-side
 against the current runtime catalog. Existing agents do not accept these fields.
 Carry the conversation and settings binding in the internal task packet, canonical hash,
-worker invocation, normalized update, and persisted task result. Unknown
-agents, invalid mode combinations, and cross-owner IDs are rejected.
+worker invocation, normalized update, and persisted task result, together with
+the context binding. Unknown agents, invalid mode combinations, cross-room IDs,
+and unauthorized humans are rejected.
 
 Define Codex success as a bounded result containing conversation ID and
 assistant text. Optional citations must refer to disclosed inputs. Result
 metadata includes confirmed model/effort and optional usage. Bind
-settings and usage to the task's conversation generation and runtime turn ID.
-Record safe settings/usage updates through the room gateway for live rendering
-and replay; do not expose raw app-server messages to the browser. Model text
+settings and usage to the task's conversation generation; the mediator verifies
+private runtime thread/turn IDs and forwards only normalized task-bound metadata.
+Record safe settings/usage updates in profile task storage for authenticated
+polling and replay; do not expose raw app-server messages to the browser. Model text
 does not inherit the deterministic agent's exact-output guarantee. Preserve
-the retained room protocol version using additive schemas and compatibility
-fixtures. Contract owners must verify old requests still validate.
+existing retained room protocol semantics and compatibility fixtures. Contract
+owners must approve the extension/release strategy in the profile before adding
+methods, agent identities, or result discriminators; compatibility is not assumed
+merely because fields are added.
 
 ## Headless app-server process and memory
 
@@ -112,7 +194,9 @@ Initialize each connection with `initialize` and `initialized`. Create via
 `thread/start`, resume by the stored exact ID via `thread/resume`, and submit
 the prompt via `turn/start` with explicit `model` and `effort`. Set read-only
 sandbox policy and `approvalPolicy: "never"` at thread creation/resume and on
-each turn. Never bypass sandboxing or execute model-requested client tools.
+each turn. Disable built-in shell/filesystem tools as well as external MCP,
+plugins, hooks, and client tools in the verified initial deployment. Never bypass
+sandboxing or execute model-requested client tools.
 If the runtime requests an interactive approval, reject it or fail safely;
 do not leave the turn waiting for an absent operator. Set an isolated working
 directory and persistent worker-managed CODEX_HOME. Provision a minimal config
@@ -122,19 +206,27 @@ operator home, host repository, room database, or platform credentials.
 Persist the returned `thread.id` from `thread/start` before submitting the first
 turn, then bind the returned turn ID to its task receipt. Parse stdout as
 bounded JSONL, correlate RPC replies by request ID and notifications by thread
-and turn IDs, and consume only approved methods. A successful reply requires
+and turn IDs, and consume only approved methods. Accumulate completed agentMessage
+items, not reasoning/tool items or unfinished deltas. Prefer phase final_answer;
+join multiple final items in their observed order with a newline. If the pinned
+runtime omits phase, use its last completed agentMessage item only after matching
+turn completion; never use a message explicitly labelled commentary as final.
+The fake protocol fixtures and live smoke test must verify this fallback for the
+pinned version. A successful reply requires
 a matching `turn/completed` with status `completed` and a nonempty final
-assistant message. The long-lived process does not exit after a successful
-turn. Failed/interrupted turns, protocol errors, unexpected process exit, or
-missing completion fail the task. Drain bounded stderr for diagnostics;
+assistant message. A successful turn does not itself cause app-server to exit;
+after durable result reconciliation, the worker closes and reaps the now-idle
+process as specified in the profile. Failed/interrupted turns, protocol errors,
+unexpected process exit during a turn, or missing completion fail the task.
+Drain bounded stderr for diagnostics;
 do not publish raw stderr, reasoning, tool output, or credentials into chat.
 
 Resume the exact thread in the same persistent store. Codex restores previous
-turns; no second memory service reconstructs them. For a new conversation,
-send only the current prompt and fixed agent instructions. Do not seed from
-previous Codex replies in room history. Authorization remains checked for
-every turn. Losing room access ends use of the old conversation; returning
-after revocation requires a fresh generation.
+turns and receives the validated room delta; no memory service reconstructs its
+native history. A new conversation receives fixed instructions and the complete
+authorized room baseline, including prior public Codex replies as room sources.
+Never import an archived native thread. Authorization and policy checks follow
+the room-history rules above.
 
 ## Model and reasoning-effort controls
 
@@ -156,7 +248,13 @@ the active-turn metadata exposed by the pinned protocol. Do not present a
 browser selection as runtime-confirmed. Persist accepted defaults for future
 turns and settings used for each reply. Where the runtime reports a model
 reroute, show the reported model for that turn separately from the selected
-default. If confirmation is missing, label the setting unconfirmed.
+default. If confirmation is missing, label the setting unconfirmed. The adapter
+must specify the pinned schema's thread start/resume model and reasoningEffort
+fields, thread/settings/updated correlation, and turn-bound model/rerouted
+handling in its implementation plan. A settings notification without a turn ID
+is correlated only within the single reserved turn on that dedicated process;
+it is not proof of a model request's actual routing. A null effort remains
+unconfirmed.
 
 ## Context-window indicator
 
@@ -203,8 +301,10 @@ Persist a task receipt as reserved before launching, then running with thread
 binding, then completed with normalized output. A recovered completed receipt
 can replay its result without another CLI invocation. A recovered uncertain
 running receipt must fail with `conversation_interrupted`, mark the conversation
-unusable, and require a fresh session. Do not promise exactly-once provider
-execution across process/database crashes. Prevent broker lease reclamation
+unusable, and require a fresh session. The
+[profile's state and crash rules](conversation-integration-profile.md) specify
+write ordering, first-turn failure, and replacement behavior. Do not promise
+exactly-once provider execution across process/database crashes. Prevent broker lease reclamation
 from blindly reinvoking an uncertain task.
 
 Mark a failed turn's conversation unusable when the worker cannot establish
@@ -221,9 +321,9 @@ Use an API-key authentication path for the initial automated deployment;
 personal ChatGPT session import is outside scope. The UI advertises Codex only
 when its configured capability is enabled.
 
-Give this runtime separately reviewed provider egress through a restricted
-proxy or equivalent host allowlist. Model traffic can reach only the configured
-provider HTTPS origin; arbitrary redirects and destinations are rejected.
+Give this runtime separately reviewed provider egress through a dedicated
+restricted HTTPS proxy. Initially api.openai.com is the sole provider HTTPS
+origin; arbitrary redirects and destinations are rejected.
 Keep existing reference-agent network restrictions in place. A read-only
 filesystem alone is insufficient to restrict network access. Review credential
 injection and session-volume permissions before enabling the live service.
@@ -249,7 +349,20 @@ injection and session-volume permissions before enabling the live service.
 Before implementation, mirror approved scope into the affected child
 specifications and record the owning issue for contribution traceability.
 The approved repository foundation registers this independent child in the root
-workspace. Runtime admission and compatibility remain separate approval gates.
+workspace. The coordinated child specifications and written plan were approved on
+2026-10-05 with accepted issue traceability. Published contract compatibility,
+dependency order and runtime admission/isolation remain execution gates.
+
+## Future directory guidance
+
+The initial process uses an isolated working directory containing only fixed
+instructions, separate from CODEX_HOME and its persistent session store.
+No client-supplied path is accepted. Preserve a worker-owned guidance identity
+in the internal conversation binding: initially the fixed instruction revision.
+Future immutable specification and curated-memory bundles can replace that
+identity only through reviewed configuration and a new native thread. See
+[guided workspace requirements](../what/guided-workspace.md). This extension does
+not add host mounts, memory writes, or extra tools to the initial release.
 
 ## Verification
 
@@ -257,8 +370,16 @@ Use a fake app-server executable to verify startup/handshake, exact-ID resume,
 captured thread/turn bindings, malformed/oversized JSONL, failure events,
 timeout/process cleanup, session loss, completed-receipt replay, and uncertain
 restart recovery.
-Gateway integration tests verify owner/room boundaries, fresh generations,
-duplicate requests, simultaneous turns, stale leases, and membership loss.
+Gateway integration tests verify existing room participation permissions, fresh
+generations, duplicate requests, simultaneous turns, stale leases, token expiry,
+and agent/disclosure-policy revocation. Future membership controls use the same
+authorization port; browser Leave remains disconnection, not revocation.
+History fixtures verify first invocation after multi-human discussion, another
+human continuing the thread, intervening ordinary messages, hidden sequence
+gaps, excluded targeted messages, single trigger inclusion, accepted native-reply
+binding, policy invalidation, wrong base/digest, context limits, and reset with a
+new baseline. Trigger tests prove aliases, quoted mentions, and agent replies
+do not invoke Codex.
 Adapter tests verify catalog pagination, model-specific efforts, confirmed
 settings, setting changes on the same thread, and model-access errors without
 fallback. Usage tests cover last versus cumulative counts, missing/zero windows,
@@ -275,10 +396,354 @@ can invoke its reviewed image without linking its runtime implementation.
 
 An opt-in live smoke test sends a unique fact, asks for that fact on a resumed
 turn, restarts the worker and repeats, then starts fresh and verifies a distinct
-thread and no injected old turns. Verify freshness structurally; a model's
-answer alone is not proof that history was excluded. Change model and effort
+thread and a fresh authorized room baseline without importing the old native
+thread. Verify freshness structurally: old public facts can legitimately be
+available from room history, so a model's answer cannot prove thread freshness.
+Begin the smoke test with a unique fact in an ordinary human room message,
+then have a different human address Codex about it. Continue after additional
+ordinary discussion and verify the delivered delta structurally.
+Change model and effort
 between turns and verify preserved thread identity, restored history, runtime
 confirmation, and telemetry from that turn. A second model is exercised only
 when accessible to the configured account; record coverage explicitly. Live verification needs
 configured provider authentication and restricted egress; do not claim it has
 passed based on fake app-server tests.
+
+## Task 4 adapter execution decomposition
+
+Task 4 is authorized after the verified gateway route checkpoint. The independent
+library consumes the published conversation release and the stable generated
+Codex CLI 0.160.0 protocol. `contracts/codex-app-server-0.160.0/lock.json` hashes
+its unmodified generated v2 schema and initialize response. Schema generation
+uses an isolated temporary home and does not start inference.
+
+The host config supplies an executable and argument vector, an isolated cwd and
+native home, a deployment model-ID allowlist, catalog/guidance revisions and
+bounds that may only lower the approved maxima. The child receives a cleared
+environment with worker-owned HOME/CODEX_HOME and fixed nonsecret defaults.
+Provider-key/proxy injection, authenticated transport and durable receipt
+implementation belong to Task 5/8, not this provider-free library unit.
+
+Validate the complete packet and native mapping before creating/resuming a
+thread. Catalog model IDs are opaque options mapping to the native `model`
+field. Effort IDs are generated from each native catalog effort and mapped
+inside the adapter; callers cannot pass a native enum directly. Discover every
+catalog page, reject duplicates/cycles or unsupported choices, and never use a
+hidden or disallowed model. Refresh catalog for each new process.
+
+An async host barrier receives the exact thread ID after creation/resume and
+before turn/start. Task 5 must commit mapping/submission intent there. Barrier
+failure prevents submission and reaps the process. The library does not claim
+durable or exactly-once execution independently. One execute operation per
+process avoids unacknowledged history reuse; the host closes successful idle
+processes after result reconciliation. Error, timeout, cancellation and Drop
+terminate the dedicated process group; explicit close awaits child reaping.
+
+JSONL stdout and stderr are bounded independently and collectively. Parse
+unique object keys, correlate replies by RPC ID, reject server requests for
+approval/client tools, and reject activity from another thread/turn. Select
+completed agentMessage items only after matching completed turn status; prefer
+all final_answer items in observation order, or the last phase-less completed
+item when no explicit final exists. Commentary and unfinished deltas cannot
+produce success. Generated native schemas constrain consumed event structures;
+the closed published profile constrains normalized packets and replies.
+
+Thread start/resume use `config.model_reasoning_effort`; each turn also uses the
+native effort field. Settings map runtime model/effort confirmation to public
+options. Thread-only settings notifications describe configured settings only
+within the dedicated active turn; turn-bound model reroutes remain separately
+reported and grant no selection authority. Usage binds the exact thread/turn,
+uses last.totalTokens without adding breakdowns, and never invents a denominator.
+Missing/invalid reports remain unavailable; model switches/reset/compaction
+invalidate earlier readings. Tests verify process requests and lifecycle but do
+not prove live tool or network isolation.
+
+## Task 4 provider-free verification checkpoint — 2026-10-05
+
+The maintainer authorized this adapter unit after Task 3. The isolated branch
+`codex-app-server-adapter` consumes the actual published profile and unmodified
+stable CLI 0.160.0 schemas. The root coordinated plan records the exact local
+commit. Source, tests, generated-schema provenance and dependency/license
+evidence belong to this independent repository; no gateway code was copied.
+
+The final provider-free suite has 21 passing tests: 15 external-process tests,
+five catalog/usage tests and one close-cancellation regression. Reproducing
+regressions addressed review findings for execution cancellation, generation
+binding, model-change telemetry and cancelled close. Final independent review
+has no remaining Critical or Important findings. Formatting, Clippy with
+warnings denied, 139 vendored-file hashes, documentation and root governance
+checks pass. Rust 1.93.1 was exercised; the declared 1.85 minimum was not directly
+exercised. See docs/dependency-evidence.json for the inactive WASI dependency.
+
+The test executable is synthetic and makes no inference calls. Explicit
+no-tool/read-only/never-approve requests are verified at the process boundary;
+no live isolation, end-to-end interoperability or production readiness is
+claimed. Task 5 owns durable receipts, authenticated worker transport and
+packaging. Provider access, publication and activation remain separate gates.
+
+Task 4 local source revision: `e61a5f79568ce24e411f559efc5290000638395a`; implementation remains in the isolated
+`codex-app-server-adapter` branch and has not been merged into this checkout.
+
+## Task 5 worker execution checkpoint — 2026-10-06
+
+The authorized worker unit adds SQLite mapping/receipts and broker acknowledgements,
+four process slots, scoped concurrency, authenticated A2A/card/control transport,
+expiry/cancellation and independent pinned packaging. Its synthetic subprocess
+and real-SQLite suite has 37 passing tests: the 21 adapter tests plus 12 receipt
+and four HTTP tests. The root plan records the exact isolated local commit and
+image identity. Rust/Cargo 1.93.1 was exercised; the declared 1.85 minimum was not.
+
+Review regressions reproduced and fixed cancellation during a blocked completion
+write, native replies duplicated as transcript text, missing native bindings and
+policy rollback. Missing expected bindings and invalidating policy changes
+persist invalidation and require explicit new. A terminal mutex is acquired after
+SQLite writes and immediately before the final authority check/commit; cancellation
+can win while persistence waits, and completion wins once final commit begins.
+Processes can close after durable completion while broker acknowledgement is
+pending; native history remains private and continuation stays blocked.
+
+The admitted A2A server handler interface/native types are reused with an Axum
+JSON-RPC wrapper that preserves canonical integer types. The stock protobuf
+router coerces integers into floats and is unsuitable for exact profile packets.
+This is a transport implementation detail, not a cross-repository contract change.
+
+Formatting, Clippy, exact 139 profile/native files, 477 retained legal texts for
+275 locked crates, documentation and root governance checks pass. Independent
+review has no remaining Critical or Important findings. ARM64 image build and
+network-disabled/read-only package check verify the pinned Codex release, schema
+and UID/GID 10003; unconfigured service startup is rejected. x86_64 CI is defined
+but has not been executed locally. No provider inference, deployment activation,
+merge or publication occurred; Tasks 6–9 own the remaining integration gates.
+
+Task 5 local source revision: `b23cf7cd002270de16a7b572a0e810e2fd9ff15d`; source remains in the isolated
+`codex-worker-receipts` branch and has not been merged into this checkout.
+
+## Task 6 approved-profile transport correction — 2026-10-06
+
+The approved contracts profile requires a closed A2A input DataPart envelope
+`{profileVersion, packet: TaskInput}` and completed artifact
+`{reply: InternalReply, runtimeBinding: {threadId, turnId}}`. Matching task/context
+IDs derive from the inner packet. Bare packets, extra envelope fields and wrong
+profiles fail before inference. Worker.execute continues to return InternalReply.
+The authenticated receipt projection adds runtimeBinding from committed native
+thread/turn columns only for completed receipts, otherwise null. GetTask and
+CancelTask replay the same bound completed artifact. The mediator compares this
+private binding with its durable worker receipt; only InternalReply reaches the
+broker/browser. Native identifiers are worker/mediator-private; no native session
+files or credentials are returned. Provider-key echoes in identifiers are rejected
+before persisting those identifiers. This corrects Task 5 transport implementation
+to the already approved profile without adding routes or provider activation.
+
+The corrected transport source is committed locally at
+`6a0c03548053d6ad21958a1c2f8c442ae777d35c` on
+`codex-worker-transport-contract`. Independent read-only review found no blockers;
+38 existing tests and six service tests in an independent regression copy pass.
+The rebuilt ARM64 image is
+`sha256:c3951b12e58154f289c6554fe27768c315001c48b1dfdec13791423736966eae`.
+Its pinned CLI/archive/schema checks and network-none/read-only package check
+pass. Unconfigured startup exits 1 before inference. Original Task 5 source and
+image remain historical checkpoints; no provider use, activation or publication
+was performed. Detailed package evidence is in `docs/image-evidence.json` in the isolated
+`codex-worker-transport-contract` checkout.
+
+Task 6 profile review also enforces `expiresAt <= leaseExpiresAt`, alongside the
+authorization deadline and 180-second packet bound, before any app-server protocol
+request. A still-live lease ending before the packet deadline is invalid input;
+equality remains accepted. This implements the approved published wire annex.
+
+The final lease-guard source is `9dfc90189526bdc63bd1be8c189da2b665f3387f`.
+Independent scoped review and all 39 provider-free tests pass. The final rebuilt
+ARM64 image is
+`sha256:95145520f4249ac1e843c0f13a817e0c42cfc578735abef5fa7b760333596a1b`,
+superseding the earlier Task 6 transport image above. Archive/version/both schema
+checks and network-none/read-only package verification pass; unconfigured startup
+exits 1 before inference. Detailed evidence preserves both earlier image identities.
+No provider use, service activation or publication occurred.
+
+## Task 8 local packaging checkpoint — 2026-10-07
+
+Platform `9626bc46f8b74c2a58b2578c4f744996f3d41317` on `codex-opt-in-platform` and worker `d40e4a8cd5efc77c7161742aec7ade289efb357a` on
+`codex-worker-tool-policy` passed independent task review. The coordinated plan
+records immutable image identities and synthetic kernel/TLS/startup/native-tool
+capture evidence. Feature flags alone were insufficient for initial tool
+restriction; the corrected pinned worker binds sanitized catalog, controls and
+actual CLI evidence. Linux ARM64 is verified locally; x86_64 remains blocked on
+equivalent capture. Cold bootstrap admission expires within five seconds after
+health renewal stops; no instantaneous withdrawal from already-open UI is claimed.
+Original checkouts retain their runtimes/scaffold. No provider inference,
+activation, merge or publication occurred. Task 9 retains end-to-end integration
+and separately authorized live verification; directory guidance remains later.
+
+## Task 9 synthetic verification and correction checkpoint — 2026-10-07
+
+Provider-free checkpoint only; Task 9 and the milestone remain open.
+
+Task-scoped verification review: Approved. Broad implementation review: Partial
+spec compliance; quality Needs follow-up. B1–B3 (pending-ack recovery, omitted
+shared settings and receipt-correlated safe failures) are addressed. B4 is
+partial: explicit initial/reset selection works for full-capability admission,
+but automatic server-default display requires an approved interface amendment.
+F1: unresolved Important reasoning-only UI deadlock. Optional capabilities are
+independent; an effort-only admission cannot establish the guard-required model
+through its hidden selector. This prevents initial/reset invocation and blocks
+whole-milestone/merge readiness. No second broad fix wave or waiver is implied.
+
+| Owner | Final reviewed local revision |
+|---|---|
+| contracts | `85baf86e574276fcd036e53e23641af6aad602f9` |
+| broker | `fd05cb48b8508e7939f9cdf9df275742a06fc4f8` |
+| mediator | `6c3d96b4763871b9addc9bc7223e71ee7d38abd9` |
+| worker | `b0d43ec2b5b0c8da035d4ccff754545132b978d4` |
+| ui | `e51d67e9e1a986601df6b5e1acf68aaf7ae0870d` |
+| platform | `637a69279f0fe5019560b1e54d28f48c1c715897` |
+
+All six reviewed worktrees were clean when this checkpoint was prepared.
+Runtime is committed only on isolated local branches; originals retain their
+runtime/scaffold and unrelated edits. Contracts v1.0.0 and dependency lockfiles
+remain unchanged.
+
+Controller final verification on platform revision above: `node
+scripts/smoke-codex-conversation.mjs --fake` (session85023) exit0, six original
+crash/commit boundaries, 11 fake native turns, exact baseline/delta/source IDs,
+targeted/cross-room exclusion, duplicate=one logical turn, worker restart and
+fresh reset, shared omitted settings, rejected-completion recovery and exact
+execution_failed/session_unavailable/runtime_unavailable projections. `node
+--test scripts/tests/codex-conversation-smoke.test.mjs` (session23304) exit0,
+13 passed, zero failed. This is synthetic native/identity/private-DNS adapter
+coverage, not whole packaged Compose, real Keycloak/browser or provider proof.
+
+Inspected owner logs and independent review record broker150 passed + one
+pre-existing ignored live test; mediator65 passed, zero failed/ignored (correcting
+the earlier reported68); worker46; UI121 + pin/tamper checks and production
+build. Owner fixture tests3, actual assertion-failure/SIGTERM/SIGINT cleanup3,
+package/startup checks10 passed. Earlier contracts/regression/legal/pin evidence
+is retained with original attribution, not presented as rerun here.
+
+New ARM64 worker image:
+`sha256:2d8bfade27802f910cf68e832722c93b4a2acc2addb825711e1223617a4cd385`.
+Compiled runtime revision `b418a76e0e7ca047b5fe995eb17519aced369a06`; worker
+head above adds evidence documentation. Immutable image readiness checks used
+network-none/read-only/cap-drop-all, both admission markers; default invocation
+refused as expected. Actual native 44-setting/eight-model/resume/six unsolicited
+tool refusal evidence remains attributed to its earlier source/image, not this
+new image. CLI/catalog/control hashes are unchanged. x86_64 native admission and
+Rust1.85 minimum-version checks remain unrun.
+
+Default discovery: pending specification approval. The local proposed How is
+`thought-khoral-codex-agent/.ai/specs/how/default-settings-discovery-proposal.md`.
+It proposes a read-only authenticated defaults query in a new immutable v1.1.0
+artifact and independent mixed-capability controls, covering absent conversation
+and explicit New/reset. It authorizes no runtime or published contract changes.
+Live provider verification: pending. Account/model availability, actual native
+history, live tool/egress/key isolation, packaged deployment/private DNS and real
+browser/identity evidence remain separately gated. No merge, push, publication,
+service activation or provider inference occurred.
+
+Independent review artifacts are retained outside Git at
+`/private/tmp/codex-conversation-task9/final-fix-review.md`,
+`final-implementation-review.md`, and `task9-fix-review.md`; owner evidence at
+`/private/tmp/Task9-final-fix-evidence/`. Final root/documentation/source-reference
+and identity gate results will be recorded in the controller checkpoint after
+these source-derived record updates. The aggregate release checklist remains
+unchecked; passing synthetic checks do not resolve F1 or default discovery.
+
+## Approved defaults-discovery amendment — 2026-10-07
+
+The maintainer approved the [visible server defaults design](https://github.com/thoughtkhoral/thought-khoral-codex-agent/blob/main/.ai/specs/how/default-settings-discovery-proposal.md) in
+this conversation on 2026-10-07 after an explicit specification approval request.
+It authorizes coordinated local implementation and synthetic verification of
+the additive authenticated defaults query and independently optional model/effort
+controls, including the F1 initial/reset effort-only deadlock. The accepted
+design is the governing amendment to earlier default-visibility wording.
+
+The contracts owner defines `ResolvedSettingsView` at
+`GET /api/agent-conversations/v1/rooms/{roomId}/agents/{agentId}/defaults` in
+new immutable artifact `thought-khoral-agent-conversation-v1.1.0`, retaining the
+v1 profile/namespace and all existing published v1.0 schema/fixture bytes.
+The broker validates authenticated room/agent authority, current admission,
+catalog revision, policy-default pair and five-second bound before responding.
+The read has no task/event/conversation/lease/native-state mutation, exposes no
+effective-settings confirmation, credentials or private/native identifiers,
+uses the existing safe ProfileError/HTTP mapping and `Cache-Control: no-store`.
+There is no inferred catalog-order model or inference fallback.
+
+The UI resolves and displays the concrete explicit next-turn pair when absent
+or explicitly New/reset; restored continuation uses accepted shared settings.
+Both capabilities allow both controls; effort-only keeps the resolved model
+read-only; model-only keeps the displayed model-specific catalog default effort
+read-only; neither capability retains the settings-free path. Unsupported
+controls stay uneditable and no hidden control blocks a valid required choice.
+Catalog/pair mismatch requires bounded refresh or an explicit unavailable state.
+A still-valid explicit pair is not replaced after a deployment-default-only change.
+
+As a scoped exception to the earlier published-artifact-first execution order,
+isolated consumers may pin a reproducible local candidate from an exact committed
+contracts revision, verified archive and per-file SHA-256 values, clearly marked
+unreleased. This exception is only for this amendment's local pre-publication
+development and synthetic testing. Published v1.0 provenance/bytes remain intact.
+No release publication, shipped interoperability, merge, push, provider use or
+service activation is authorized. Whole milestone/Task9 acceptance remains open.
+
+## Defaults discovery local synthetic checkpoint — 2026-10-07
+
+All four defaults-amendment tasks passed their independent reviews. The final
+whole-branch review passed. F1 (initial/New reasoning-only settings deadlock) and
+visible defaults discovery are accepted for this local synthetic candidate.
+
+| Source | Exact local revision | Retained worktree |
+| --- | --- | --- |
+| contracts | `1ea828f28725ddaaefa21d083473f9abbd777975` | `/private/tmp/codex-conversation-defaults/contracts` |
+| broker | `2e7d23b467c572819f498c3b9bf14d74a62dc821` | `/private/tmp/codex-conversation-defaults/room-gateway` |
+| mediator | `6c3d96b4763871b9addc9bc7223e71ee7d38abd9` | `/private/tmp/codex-conversation-final-fix/agent-gateway` |
+| worker | `b0d43ec2b5b0c8da035d4ccff754545132b978d4` | `/private/tmp/codex-conversation-final-fix/worker` |
+| ui | `79e5e7310a450efea561548cd87871446c1939aa` | `/private/tmp/codex-conversation-defaults/workspace-ui` |
+| platform | `2d856773078a7caa542d719e539b55a5ab2dafaa` | `/private/tmp/codex-conversation-defaults/platform` |
+
+The composed run was executed at `f9afeb20b746200daa9cdef0406c03f88a422b68`.
+The subsequent path-provenance correction was tested and scoped-reviewed at
+`220f6e0c74a29c000d7de81c0cb77823de0bd15c`;
+the final platform revision above adds completion metadata only. The original
+repositories retain their runtime; local implementation branches remain unmerged.
+
+The unreleased candidate contract source is
+`1ea828f28725ddaaefa21d083473f9abbd777975`, proposed release
+`thought-khoral-agent-conversation-v1.1.0`. Its archive SHA-256 is
+`fab59a486f6498b843467202debcb0768403bd57ba7dda41be2a01e5f23fdda8`
+and externally anchored lock SHA-256 is
+`7914d32eae2487879a68405b5095a6b9aa91355f87529c43f4055844821902a9`.
+All 156 candidate payload files match in broker/UI; published v1.0 bytes remain
+unchanged. The profile and API namespace stay v1. This is not a published release.
+
+Evidence: retained 125 contract fixtures plus 16 additive cases and 6 candidate
+integrity tests; broker serial suite 158 passed with 1 existing live-only test
+ignored; UI full suite 190 passed with 1 intentional composed skip, followed by
+scoped harness/TypeScript checks; 26 source-pin and 13 retained runner guards;
+5 fixture unit tests; 3 actual failure/SIGTERM/SIGINT cleanup cases. The composed
+candidate passed 12 capability/lifecycle cases, 3 display/send mutation cases,
+15 actual HTTP UI children with 90 test passes, and 24 synthetic native turns
+(11 retained baseline plus 13 added). Stale/removed pairs allocate no task/event
+or native turn, retain the prompt and require explicit Refresh. Default-only
+changes preserve the displayed explicit pair; unavailable replay is immutable.
+Paused-publisher regressions verified RED before and GREEN after atomic exclusive
+handshake publication. Owned processes, containers and staging files were cleaned.
+
+The current composed state is `/var/folders/70/5kxy5kys3bj0252chp3ck8900000gn/T/Task9-codex-conversation-j9py6w`. Full provenance,
+task/thread bindings, raw log references, limitations and review reports remain in
+`/private/tmp/codex-conversation-defaults/defaults-reviewed-checkpoint.json` and
+`/private/tmp/codex-conversation-defaults/task-4-logs/`. Root hierarchy/reference/
+identity, scaffold documentation and whitespace results are recorded separately
+in `/private/tmp/codex-conversation-defaults/final-gates.json` after synchronization.
+The old parallel broker fixture port collision and Vite chunk advisory are
+retained limitations; no passing parallel broker-suite claim is made.
+
+Publication: pending
+
+Packaged-stack verification: pending
+
+Live provider verification: pending
+
+The composed gate uses jsdom, a synthetic room socket, actual conversation HTTP
+and storage, and a fake native executable. It does not establish packaged Compose,
+real browser/Keycloak, provider, architecture-minimum or new-image acceptance.
+Task 9 and milestone aggregate gates remain open. Specification/memory-guided
+working directories remain the separately scoped future extension.
