@@ -141,3 +141,7 @@ binds the installed CLI binary, catalog, controls and this evidence. Its new
 empty-tool marker is required by platform startup. Evidence covers Linuxaarch64;
 Linuxx86_64 fails closed pending a reviewed equivalent capture. No provider
 inference or account-access verification is implied.
+
+The [Task8 image evidence](task8-image-evidence.json) records the reviewed local
+image ID and runtime source commit; the earlier Task6 image record is retained
+as historical evidence and does not pass the new tool-policy gate.
