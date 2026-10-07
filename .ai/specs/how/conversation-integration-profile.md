@@ -145,8 +145,9 @@ visible defaults discovery are accepted for this local synthetic candidate.
 The composed run was executed at `f9afeb20b746200daa9cdef0406c03f88a422b68`.
 The subsequent path-provenance correction was tested and scoped-reviewed at
 `220f6e0c74a29c000d7de81c0cb77823de0bd15c`;
-the final platform revision above adds completion metadata only. The original
-repositories retain their runtime; local implementation branches remain unmerged.
+the final platform revision above adds completion metadata only. The Codex
+adapter/worker history is now merged into this repository's local main; separate
+contracts, gateway, UI and platform branches remain unmerged in their repositories.
 
 The unreleased candidate contract source is
 `1ea828f28725ddaaefa21d083473f9abbd777975`, proposed release
@@ -190,3 +191,12 @@ and storage, and a fake native executable. It does not establish packaged Compos
 real browser/Keycloak, provider, architecture-minimum or new-image acceptance.
 Task 9 and milestone aggregate gates remain open. Specification/memory-guided
 working directories remain the separately scoped future extension.
+
+
+## Later local integration authorization — 2026-10-07
+
+The user later authorized a local commit of the approved Codex-agent
+specifications and a local merge of the reviewed adapter/worker history into
+this repository's `main`. That instruction updates the earlier merge boundary
+only for this repository; it does not authorize merge, push, publication or
+activation in the separate component repositories.

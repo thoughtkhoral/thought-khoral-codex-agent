@@ -1,22 +1,22 @@
 # ThoughtKhoral Codex agent
 
 An independent Codex agent for the ThoughtKhoral collaborative workspace.
-The proposed runtime wraps headless Codex and communicates through the agent
+The runtime wraps headless Codex and communicates through the agent
 gateway; it does not access room storage directly.
 
 ## Status
 
-**Scaffold checkout; Tasks 4–8 implemented on isolated local branches.**
+**Provider-free Codex agent and worker runtime is merged into local `main`.**
 The provider-free adapter is committed at `e61a5f79568ce24e411f559efc5290000638395a`
-on `codex-app-server-adapter`. See the [execution checkpoint](.ai/specs/how/codex-chat-agent.md).
+and merged from `codex-app-server-adapter`. See the [execution checkpoint](.ai/specs/how/codex-chat-agent.md).
 Repository governance, documentation checks, and
 Apache 2.0 licensing are established. The adapter and durable A2A/SQLite worker use provider-free tests. Task 5 is
-committed at `b23cf7cd002270de16a7b572a0e810e2fd9ff15d` on `codex-worker-receipts`;
+committed at `b23cf7cd002270de16a7b572a0e810e2fd9ff15d` and merged from `codex-worker-receipts`;
 see its [execution checkpoint](.ai/specs/how/codex-chat-agent.md). Task 6 gateway mediation and its
 broker catalog adapter are committed on isolated local branches. The worker
 transport correction and verified image are recorded in the same checkpoint.
-Tasks 7–8 UI and opt-in platform packaging are committed locally on independent
-branches, including the reviewed pinned-worker tool-policy correction. Task 9
+Tasks 7–8 UI and opt-in platform packaging remain on independent local branches.
+The reviewed worker tool-policy and recovery corrections are merged here. Task 9
 synthetic verification and runtime corrections are reviewed locally. Important UI
 finding F1 and resolved-default discovery are accepted on reviewed local
 synthetic candidate branches. Contract publication, whole packaged-stack and
@@ -37,7 +37,7 @@ adds a reviewed directory of specifications, instructions, and curated memory.
 ## Start here
 
 - [Specification index](.ai/specs/README.md) — source of truth and approval status.
-- [Architecture](docs/architecture.md) — proposed boundaries and data flow.
+- [Architecture](docs/architecture.md) — runtime boundaries and data flow.
 - [Documentation workflow](docs/README.md) — specification-to-document traceability.
 - [Contributing](CONTRIBUTING.md) — issue-first contribution and verification.
 - [ThoughtKhoral repository map](https://github.com/thoughtkhoral/thought-khoral/blob/main/docs/repository-map.md).
@@ -52,14 +52,15 @@ python3 scripts/check_docs.py
 git diff --check
 ```
 
-CI runs the documentation check on pushes and pull requests. Runtime build,
-test, and deployment instructions will follow approved implementation work.
+Run the provider-free runtime suite with `cargo test --locked --offline`.
+CI runs the runtime and documentation checks on pushes and pull requests.
 
 ## Compatibility boundary
 
 The [contracts repository](https://github.com/thoughtkhoral/thought-khoral-contracts)
-owns cross-project compatibility. This scaffold pins no runtime contract and
-makes no interoperability or production-support claim. The existing Reference
+owns cross-project compatibility. This runtime pins the published v1.0 profile;
+the reviewed v1.1 defaults candidate remains unreleased. Synthetic tests do not
+establish packaged deployment or live interoperability. The existing Reference
 Agent remains independent; general bring-your-own-agent onboarding is future work.
 
 ## License and sources

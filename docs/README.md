@@ -8,14 +8,18 @@ not generate them or rewrite their sources.
 | --- | --- |
 | [Repository README](../README.md) | [Public documentation](../.ai/specs/what/public-documentation.md) |
 | [Architecture](architecture.md) | Approved [runtime design](../.ai/specs/how/codex-chat-agent.md) |
+| [Worker runtime](runtime.md) | Approved [runtime design](../.ai/specs/how/codex-chat-agent.md) |
+| [Adapter library](adapter.md) | Approved [runtime design](../.ai/specs/how/codex-chat-agent.md) |
+| [Third-party sources](../THIRD_PARTY_NOTICES.md) | Approved [runtime design](../.ai/specs/how/codex-chat-agent.md) |
 | Shared conversation profile | Approved [integration profile](../.ai/specs/how/conversation-integration-profile.md), owned by contracts before publication |
 | Future directory guidance | Draft [guided workspace requirements](../.ai/specs/what/guided-workspace.md) |
 | [Contribution guidance](../CONTRIBUTING.md) | [Governance](../.ai/specs/decisions/001-governance-and-license.md) |
 | [Agent instructions](../AGENTS.md) | [Foundation design](../.ai/specs/how/repository-foundation.md) |
 
-Tasks 4–8 runtime/UI/packaging changes are reviewed on isolated local branches;
-this checkout remains the scaffold. The [runtime checkpoint](../.ai/specs/how/codex-chat-agent.md)
-records scope and evidence; Task 9 synthetic verification and corrections are recorded; Important UI finding
+The provider-free adapter/worker runtime is merged into this repository's local
+`main`; the gateway, broker, UI and platform components remain on separate
+reviewed local branches. The [runtime checkpoint](../.ai/specs/how/codex-chat-agent.md)
+records scope and evidence. Task 9 synthetic verification and corrections are recorded; Important UI finding
 F1 and resolved-default discovery are accepted on reviewed local synthetic
 candidate branches. Contract publication, packaged-stack and authorized live
 checks remain pending.

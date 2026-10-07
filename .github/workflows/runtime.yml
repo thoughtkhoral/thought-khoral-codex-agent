@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: Apache-2.0
+name: Provider-free runtime
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.93.1
+        with:
+          components: rustfmt, clippy
+      - run: cargo test --locked
+      - run: cargo fmt --check
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - run: python3 scripts/check_contract_pins.py
+      - run: python3 scripts/check_dependency_notices.py
+      - run: python3 scripts/check_docs.py
+      - run: git diff --check
+      - run: docker build -f Containerfile -t codex-worker-test .
+      - run: docker run --rm --network none --read-only codex-worker-test --verify-package

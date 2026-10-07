@@ -6,8 +6,9 @@ Approved by the project maintainer in the Codex working session on 2026-10-05,
 including this milestone-one specification and the coordinated implementation
 plan. Accepted contribution: [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1).
 Implementation follows the [plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md) and its dependency gates.
-Release/tag publication, provider use and service activation require their
-separate later authorization. No completed runtime or live verification is claimed.
+The provider-free agent and worker runtime is implemented in this repository.
+Cross-repository end-to-end integration, publication, provider use and service
+activation retain separate gates; no live verification is claimed.
 
 ## Data flow and boundaries
 
@@ -481,8 +482,8 @@ no live isolation, end-to-end interoperability or production readiness is
 claimed. Task 5 owns durable receipts, authenticated worker transport and
 packaging. Provider access, publication and activation remain separate gates.
 
-Task 4 local source revision: `e61a5f79568ce24e411f559efc5290000638395a`; implementation remains in the isolated
-`codex-app-server-adapter` branch and has not been merged into this checkout.
+Task 4 source revision `e61a5f79568ce24e411f559efc5290000638395a` is included in
+the local main integration, merged from `codex-app-server-adapter`.
 
 ## Task 5 worker execution checkpoint — 2026-10-06
 
@@ -515,8 +516,21 @@ and UID/GID 10003; unconfigured service startup is rejected. x86_64 CI is define
 but has not been executed locally. No provider inference, deployment activation,
 merge or publication occurred; Tasks 6–9 own the remaining integration gates.
 
-Task 5 local source revision: `b23cf7cd002270de16a7b572a0e810e2fd9ff15d`; source remains in the isolated
-`codex-worker-receipts` branch and has not been merged into this checkout.
+Task 5 source revision `b23cf7cd002270de16a7b572a0e810e2fd9ff15d` is included
+in the local main integration, merged from `codex-worker-receipts`.
+
+## Completed-result replacement clarification (2026-10-07)
+
+A completed receipt can remain pending broker acknowledgement after the broker
+terminally rejects that task. Cancellation of a completed task preserves its
+receipt, as required by the published profile. A subsequently authenticated
+explicit New baseline may replace the room/agent mapping only with a different
+conversation ID and strictly greater generation. Reserved/running tasks remain
+exclusive. Continuation of pending acknowledgement stays blocked. Replacement
+clears the native mapping and starts a distinct thread; completed receipts and
+conflicting-ack checks remain intact. A late old acknowledgement can update
+only its old receipt, never ready the newer conversation. Task/get and receipt
+projection retain the old completed result; stale execution cannot reopen it.
 
 ## Task 6 approved-profile transport correction — 2026-10-06
 
@@ -570,9 +584,55 @@ restriction; the corrected pinned worker binds sanitized catalog, controls and
 actual CLI evidence. Linux ARM64 is verified locally; x86_64 remains blocked on
 equivalent capture. Cold bootstrap admission expires within five seconds after
 health renewal stops; no instantaneous withdrawal from already-open UI is claimed.
-Original checkouts retain their runtimes/scaffold. No provider inference,
-activation, merge or publication occurred. Task 9 retains end-to-end integration
-and separately authorized live verification; directory guidance remains later.
+The Task 8 worker correction is included in the local main integration. The
+platform packaging branch and other component checkouts remain separate. No
+provider inference, activation, publication or live verification is claimed.
+
+## Task 8 tool-policy correction (2026-10-07)
+
+The approved initial no-tools requirement needs both feature controls and pinned
+model metadata. Codex0.160.0 selects apply_patch and other handlers from model
+metadata independently of some feature flags. The Task6 version-only package is
+therefore insufficient for deployment admission.
+
+The worker now vendors the exact bundled model catalog from upstream tree
+`a956835d020762cb2b570053af06f643a11c0ecc`, retaining all non-tool fields. It changes
+only shell_type, apply_patch_tool_type, experimental_supported_tools, tool_mode,
+supports_search_tool and multi_agent_version. Startup uses an immutable, hashed
+restricted catalog and explicit controls for tools, agents, extensions and
+external discovery. A static catalog prevents unsanitized refresh/merge. Native
+`model/list` still supplies public IDs/efforts; execution intersects that native
+catalog with deployment admission and the exact reviewed metadata/capture cases.
+Unknown, prefixed/namespaced or unreviewed models/efforts fail closed. Known
+admitted model changes retain the existing effective-settings semantics.
+
+[Actual native request evidence](../../../contracts/codex-app-server-0.160.0/tool-policy-proof-aarch64.json)
+binds the Linuxaarch64 CLI binary, catalog and controls to44 completed synthetic
+model/effort cases across eight visible models, plus a fresh-process resume.
+All nested provider tool arrays were empty. This is a loopback capture under
+`--network none`, with no provider credential or inference. Native Ultra settings
+remain Ultra; the pinned CLI resolves their wire effort through the preserved
+model metadata (valid override, then max, then last non-Ultra, then medium).
+The test records both values. No account model access is established.
+
+`--verify-package` validates version/UID, installed catalog/controls/proof bytes,
+and the actual CLI binary digest before printing the required empty-tool marker.
+The runtime service checks the same package binding before opening its endpoint.
+Linuxx86_64 has no captured binary evidence in this change and fails package
+admission until an equivalent reviewed capture is added. No architecture coverage
+is inferred from the archive pin or source inspection.
+
+The reproducible [capture harness](../../../scripts/test-native-tool-policy.py),
+[policy checker](../../../scripts/check_tool_policy.py) and
+[provenance](../../../contracts/codex-app-server-0.160.0/TOOL_POLICY.md)
+record this narrow correction. The production provider origin remains fixed.
+
+The actual native harness also injected six unsolicited function calls: apply_patch,
+exec_command, shell, exec, client_tool and an MCP canary. Each produced a native
+unknown/unsupported tool result tied to its call ID and tool name; no client tool
+request or filesystem canary occurred. Worker protocol regression tests separately
+reject forbidden tool/approval events. This is representative negative handler
+coverage, not a claim that every possible hostile native event was enumerated.
 
 ## Task 9 synthetic verification and correction checkpoint — 2026-10-07
 
@@ -702,8 +762,9 @@ visible defaults discovery are accepted for this local synthetic candidate.
 The composed run was executed at `f9afeb20b746200daa9cdef0406c03f88a422b68`.
 The subsequent path-provenance correction was tested and scoped-reviewed at
 `220f6e0c74a29c000d7de81c0cb77823de0bd15c`;
-the final platform revision above adds completion metadata only. The original
-repositories retain their runtime; local implementation branches remain unmerged.
+the final platform revision above adds completion metadata only. This Codex
+agent repository separately merges its reviewed provider-free adapter/worker
+history into local main; other component repositories remain on their own branches.
 
 The unreleased candidate contract source is
 `1ea828f28725ddaaefa21d083473f9abbd777975`, proposed release
@@ -747,3 +808,14 @@ and storage, and a fake native executable. It does not establish packaged Compos
 real browser/Keycloak, provider, architecture-minimum or new-image acceptance.
 Task 9 and milestone aggregate gates remain open. Specification/memory-guided
 working directories remain the separately scoped future extension.
+
+
+## Local main integration checkpoint — 2026-10-07
+
+The user authorized committing the approved specifications and merging the
+reviewed `codex-final-conversation-worker` history to this repository's local
+`main`. This includes the provider-free adapter, durable worker, transport and
+tool-policy corrections, and recovery fix. It does not merge or activate the
+separate contracts, broker, mediator, UI or platform repositories. The defaults
+amendment remains an unreleased local candidate; package/live and publication
+gates remain open.

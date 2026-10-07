@@ -20,7 +20,7 @@ PARENT = "https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/RE
 LINK = re.compile(r"\]\(([^)]+)\)")
 SOURCE = re.compile(r"\]\((?:\.\./)*\.ai/specs/[^)]+\)")
 SKIP = {".git", ".codex", "sessions", "archived_sessions", "data", "secrets",
-        "node_modules", "target", "dist", "__pycache__"}
+        "node_modules", "target", "dist", "__pycache__", "licenses"}
 
 
 def main() -> int:

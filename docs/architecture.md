@@ -1,13 +1,13 @@
 # Codex agent architecture
 
-**Approved milestone-one design; this checkout remains the scaffold.**
-Reviewed worker and mediation implementations live on isolated local branches;
+**Approved milestone-one design; provider-free agent/worker runtime is in local main.**
+Reviewed mediation implementation lives on an isolated local branch;
 UI and opt-in packaging are also committed locally; Task 9 synthetic verification
 and runtime corrections are also reviewed locally. Important UI finding F1
 and resolved-default discovery are accepted on reviewed local synthetic candidate
 branches. Contract publication, whole packaged-stack and authorized live checks
 remain pending. This document derives from
-the local specifications and does not authorize implementation.
+the local specifications and records the separate integration/release gates.
 
 ## Responsibilities
 
@@ -20,7 +20,7 @@ the local specifications and does not authorize implementation.
 | Workspace UI | New/continue controls and agent-supported settings and telemetry |
 | Platform | Optional deployment, persistent storage, local credentials, restricted egress |
 
-The proposed agent wraps `codex app-server` over stdio, creates or resumes an
+The agent wraps `codex app-server` over stdio, creates or resumes an
 explicit room thread, and submits one reserved turn at a time. Native thread IDs
 remain internal. Provider credentials and history belong to the independently
 operated agent, while ThoughtKhoral controls invocation and disclosed context.
@@ -32,7 +32,7 @@ selection. It receives authorized room-wide discussion, including messages from
 other humans and messages that did not invoke it. Aliases and agent replies do
 not invoke it, and targeted messages are excluded from the shared thread.
 
-The proposed session is shared by authorized humans in the room. Starting fresh
+The room session is shared by authorized humans in the room. Starting fresh
 replaces its native thread and supplies a new room-history baseline; it does
 not erase the room transcript. Continuation supplies ordered updates with source
 IDs and a revision boundary. Model and reasoning effort can change between turns
@@ -66,12 +66,12 @@ chat uses fixed instructions and does not write memory or mount a host repositor
 
 ## Approval boundary
 
-The exact integration profile now lives in the contracts repository as a
-approved coordinated design; the local profile records worker-specific obligations.
-The maintainer accepted the six contribution issues and approved root/local
-specifications and the plan on 2026-10-05. Consumer runtime work follows
-publication of a verified immutable contracts artifact and the plan dependency
-gates. No runtime implementation or published interoperability is claimed.
+The exact integration profile is an approved coordinated design; the local
+profile records worker-specific obligations. The maintainer approved the
+provider-free agent/worker implementation on local main. Gateway, broker, UI
+and platform integration remains on separate reviewed component branches.
+No published candidate-contract release, packaged-stack or live-provider
+interoperability is claimed.
 
 Source: approved [chat requirements](../.ai/specs/what/codex-chat-agent.md),
 [runtime design](../.ai/specs/how/codex-chat-agent.md), and

@@ -1,0 +1,31 @@
+[package]
+name = "thought-khoral-codex-agent"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+publish = false
+
+[dependencies]
+a2a = { package = "a2a-lf", version = "=0.3.0" }
+a2a-server = { package = "a2a-server-lf", version = "=0.4.3", default-features = false }
+async-trait = "0.1"
+axum = "=0.8.9"
+futures = "0.3"
+sqlx = { version = "=0.8.6", default-features = false, features = ["runtime-tokio", "sqlite"] }
+tokio-util = { version = "0.7", features = ["rt"] }
+
+chrono = { version = "0.4", features = ["serde"] }
+jsonschema = { version = "=0.42.2", default-features = false }
+libc = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "process", "io-util", "sync", "time", "net", "signal"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+
+[dev-dependencies]
+http-body-util = "0.1"
+tower = { version = "0.5", features = ["util"] }
+
+tempfile = "3"

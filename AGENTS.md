@@ -15,7 +15,11 @@ Specifications are the source of truth for implementation and documentation.
 - Keep provider credentials, local configuration, Codex session files, and
   private room contents outside version control and test fixtures.
 - Preserve Apache 2.0 licensing and third-party notices.
-- Run `python3 scripts/check_docs.py` and `git diff --check` before completion.
-  Report verification accurately; this scaffold has no implemented runtime.
+- Run `cargo test --locked`, `cargo fmt --check`,
+  `cargo clippy --locked --all-targets -- -D warnings`, the contract-pin and
+  dependency-notice checkers, `python3 scripts/check_docs.py`, and
+  `git diff --check` before completion. Report verification accurately. This
+  repository contains a provider-free adapter/worker runtime; do not imply that
+  packaged deployment or live provider verification has passed unless it has.
 
 Governing specification: [repository foundation](.ai/specs/how/repository-foundation.md).

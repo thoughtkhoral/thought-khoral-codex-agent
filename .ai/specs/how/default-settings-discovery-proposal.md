@@ -132,3 +132,11 @@ for this amendment's pre-publication development and tests.
 
 Risk: this adds one public read endpoint and a coordinated contract release. The
 interim selection guard remains necessary when defaults cannot be discovered.
+
+## Later local integration authorization — 2026-10-07
+
+The user later authorized a local merge of the reviewed provider-free agent and
+worker history into this repository's `main`. This updates the merge gate only
+for this repository. It does not authorize merging the separate contracts,
+broker, mediator, UI or platform repositories, publishing the v1.1.0 candidate,
+or activating a service or provider.

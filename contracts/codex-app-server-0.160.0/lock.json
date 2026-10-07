@@ -1,0 +1,18 @@
+{
+  "cliVersion": "0.160.0",
+  "generator": "codex app-server generate-json-schema --out <isolated-dir> (without --experimental)",
+  "source": "https://github.com/openai/codex",
+  "license": "Apache-2.0",
+  "files": {
+    "initialize-response.json": "62ad689c2cb6379913c1d72749cfd8de5089d35760214123518eb92eef11acc9",
+    "schema.json": "81a88c04ae4984b16d73080f4109d0477682bc76c8adbe483e371175ce54c054",
+    "LICENSE": "d17f227e4df5da1600391338865ce0f3055211760a36688f816941d58232d8dc",
+    "NOTICE": "9d71575ecfd9a843fc1677b0efb08053c6ba9fd686a0de1a6f5382fd3c220915",
+    "upstream-models.json": "fd219bd9f061278275f528939f82f54d2eb97df4b25c23b022adbe48813d920b",
+    "restricted-models.json": "493372f14bbd5db95ee05d997d052990aff0c787d9336fa9d95ac5049f9cc9d1",
+    "tool-controls.json": "4a34aab4c764dfb93b330c89b3c5bf0e9abd5f096225e6e0f9f66df33ff47193",
+    "tool-policy-proof-aarch64.json": "91ab6c55e22236a578b494f071bbd82ce867a2e9aae4010526b7319165344169"
+  },
+  "licenseSource": "https://github.com/openai/codex/blob/rust-v0.160.0/LICENSE",
+  "noticeSource": "https://github.com/openai/codex/blob/rust-v0.160.0/NOTICE"
+}

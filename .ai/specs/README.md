@@ -7,12 +7,14 @@ rule, replacement, rationale, scope, approval, and consequences.
 
 The repository foundation is approved by the user's setup request on
 2026-10-02. Milestone-one runtime specifications and the coordinated plan were approved
-on 2026-10-05 under [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1). The provider-free Task 4 adapter is committed on isolated local branch
-`codex-app-server-adapter`; this checkout remains the scaffold. Task 5 worker transport, receipts and packaging are committed locally on
-`codex-worker-receipts`; this checkout remains the scaffold. Task 6 gateway mediation and broker catalog wiring are committed on separate
-local branches; Tasks 7–8 UI and opt-in packaging are committed locally. The Task 8 pinned-worker
-tool-policy correction is reviewed on its own branch; this checkout remains the
-scaffold. Task 9 synthetic verification and runtime corrections are reviewed locally;
+on 2026-10-05 under [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1). The provider-free Task 4 adapter and Task 5 worker transport, receipts and
+packaging are merged into this repository's local `main` from their reviewed
+branches; this repository now contains the provider-free agent/worker runtime.
+The Task 6 gateway mediation and broker catalog wiring remain on separate
+component branches; Tasks 7–8 UI and opt-in platform packaging are reviewed
+locally. The Task 8 pinned-worker tool-policy correction and Task 9 worker
+recovery fix are included in the local worker history. End-to-end service integration remains
+gated on the other components. Task 9 synthetic verification and runtime corrections are reviewed locally;
 The defaults amendment and F1 are accepted on reviewed local synthetic
 candidate branches. Contract publication, whole packaged-stack and authorized
 live checks remain pending.

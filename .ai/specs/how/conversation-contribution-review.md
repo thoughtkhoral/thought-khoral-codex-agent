@@ -253,8 +253,9 @@ reconciliation, packaging and live isolation remain later tasks. The repository
 now contains a provider-free adapter library rather than only a scaffold; no
 Codex service is enabled. Guided workspace/memory remains milestone two.
 
-Task 4 local source revision: `e61a5f79568ce24e411f559efc5290000638395a`; implementation remains in the isolated
-`codex-app-server-adapter` branch and has not been merged into this checkout.
+Task 4 local source revision: `e61a5f79568ce24e411f559efc5290000638395a`; at the
+time of this checkpoint implementation remained on `codex-app-server-adapter`.
+It is now included in the local-main integration checkpoint in the runtime How.
 
 ## Task 5 durable worker checkpoint
 
@@ -266,8 +267,9 @@ no remaining Critical or Important findings. Branch/worktree remain local and
 unpublished. Mediation, UI, opt-in isolation and end-to-end verification remain
 Tasks 6–9. Guided workspace/memory remains milestone two.
 
-Task 5 local source revision: `b23cf7cd002270de16a7b572a0e810e2fd9ff15d`; source remains in the isolated
-`codex-worker-receipts` branch and has not been merged into this checkout.
+Task 5 local source revision: `b23cf7cd002270de16a7b572a0e810e2fd9ff15d`; at the
+time of this checkpoint source remained on `codex-worker-receipts`. It is now
+included in the local-main integration checkpoint in the runtime How.
 
 ## Task 6 mediation checkpoint
 
@@ -436,8 +438,9 @@ visible defaults discovery are accepted for this local synthetic candidate.
 The composed run was executed at `f9afeb20b746200daa9cdef0406c03f88a422b68`.
 The subsequent path-provenance correction was tested and scoped-reviewed at
 `220f6e0c74a29c000d7de81c0cb77823de0bd15c`;
-the final platform revision above adds completion metadata only. The original
-repositories retain their runtime; local implementation branches remain unmerged.
+the final platform revision above adds completion metadata only. The Codex
+adapter/worker history is now merged into this repository's local main; separate
+contracts, gateway, UI and platform branches remain unmerged in their repositories.
 
 The unreleased candidate contract source is
 `1ea828f28725ddaaefa21d083473f9abbd777975`, proposed release

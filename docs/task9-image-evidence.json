@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-07",
+  "localImage": "localhost/thought-khoral-codex-agent:task9-final",
+  "imageId": "sha256:2d8bfade27802f910cf68e832722c93b4a2acc2addb825711e1223617a4cd385",
+  "runtimeSourceRevision": "b418a76e0e7ca047b5fe995eb17519aced369a06",
+  "architecture": "arm64",
+  "user": "10003:10003",
+  "workingDirectory": "/opt/thought-khoral-codex/workspace",
+  "cliVersion": "0.160.0",
+  "cliSha256": "50b06603bdcdac39b714f5c3e68583c002b8ad8779ebfdaaf4932ff016b379c0",
+  "catalogSha256": "493372f14bbd5db95ee05d997d052990aff0c787d9336fa9d95ac5049f9cc9d1",
+  "controlsSha256": "4a34aab4c764dfb93b330c89b3c5bf0e9abd5f096225e6e0f9f66df33ff47193",
+  "packageVerification": "network none; read-only; cap-drop ALL; UID/GID10003; both required markers; exit0",
+  "published": false,
+  "providerInference": false,
+  "notExercised": [
+    "x86_64 tool capture/admission",
+    "live provider/model access",
+    "real service activation",
+    "Rust1.85 minimum"
+  ],
+  "nativeCapture": {
+    "sourceEvidence": "task8-image-evidence.json",
+    "runtimeSourceRevision": "ab0432e27f80c731cffde04f75403505332ace6d",
+    "imageId": "sha256:c5aea93b30d2e70ccbd66bcb6fdef01b8332eea872aaa46a634fa007c44c1b1a",
+    "reusedUnchanged": true,
+    "actualToolPolicyCases": 44,
+    "actualVisibleModels": 8,
+    "nativeResume": true,
+    "unsolicitedToolRejections": [
+      "apply_patch",
+      "exec_command",
+      "shell",
+      "exec",
+      "client_tool",
+      "mcp__task8__canary"
+    ]
+  },
+  "defaultActivation": "no activation arguments; invalid_task_input; exit1"
+}
