@@ -26,7 +26,7 @@ def note(method, params):
 def turn(status='inProgress', items=None):
     return {'id': 'turn-exact', 'items': items or [], 'status': status, 'error': None}
 
-def model(id='model-a', name='test-native-model'):
+def model(id='model-a', name='gpt-6.1-sol'):
     return {'id': id, 'model': name, 'displayName': 'Synthetic model', 'description': 'Synthetic catalog', 'hidden': False, 'isDefault': True, 'defaultReasoningEffort': 'medium', 'supportedReasoningEfforts': [{'reasoningEffort': 'medium', 'description': 'Synthetic medium'}, {'reasoningEffort': 'high', 'description': 'Synthetic high'}]}
 initialized = False
 thread_id = 'thread-exact'
@@ -51,7 +51,7 @@ for line in sys.stdin:
                     data.append(model())
             else:
                 assert params['cursor'] == 'page-two'
-                data = [{**model('model-hidden', 'hidden-native'), 'hidden': True}, model('blocked', 'blocked-native')]
+                data = [{**model('model-hidden', 'hidden-native'), 'hidden': True}, model('blocked', 'gpt-6-sol')]
                 next_cursor = None
                 if args.scenario == 'cycle_catalog':
                     next_cursor = 'page-two'
@@ -121,13 +121,13 @@ for line in sys.stdin:
                 note('item/completed', {**notify, 'item': message})
                 if args.scenario == 'multiple_final':
                     note('item/completed', {**notify, 'item': {'id': 'final-2', 'type': 'agentMessage', 'phase': 'final_answer', 'text': 'Leo agreed.'}})
-            if args.scenario in ('settings_switch', 'usage', 'reroute', 'compaction', 'wrong_reroute'):
+            if args.scenario in ('settings_switch', 'usage', 'reroute', 'compaction', 'wrong_reroute', 'unknown_reroute'):
                 breakdown = {'totalTokens': 40, 'inputTokens': 30, 'outputTokens': 10, 'cachedInputTokens': 8, 'reasoningOutputTokens': 5}
                 note('thread/tokenUsage/updated', {**notify, 'tokenUsage': {'last': breakdown, 'total': {**breakdown, 'totalTokens': 1000}, 'modelContextWindow': 100}})
                 if args.scenario == 'settings_switch':
-                    note('thread/settings/updated', {'threadId': thread_id, 'threadSettings': {'model': 'blocked-native', 'modelProvider': 'openai', 'effort': 'medium', 'approvalPolicy': 'never', 'approvalsReviewer': 'user', 'cwd': params['cwd'], 'sandboxPolicy': {'type': 'readOnly', 'networkAccess': False}, 'collaborationMode': {'mode': 'default', 'settings': {'model': 'blocked-native', 'reasoning_effort': 'medium', 'developer_instructions': None}}}})
-                if args.scenario in ('reroute', 'wrong_reroute'):
-                    note('model/rerouted', {**notify, 'turnId': 'wrong-turn' if args.scenario == 'wrong_reroute' else 'turn-exact', 'fromModel': 'test-native-model', 'toModel': 'reported-runtime-model', 'reason': 'highRiskCyberActivity'})
+                    note('thread/settings/updated', {'threadId': thread_id, 'threadSettings': {'model': 'gpt-6-sol', 'modelProvider': 'openai', 'effort': 'medium', 'approvalPolicy': 'never', 'approvalsReviewer': 'user', 'cwd': params['cwd'], 'sandboxPolicy': {'type': 'readOnly', 'networkAccess': False}, 'collaborationMode': {'mode': 'default', 'settings': {'model': 'gpt-6-sol', 'reasoning_effort': 'medium', 'developer_instructions': None}}}})
+                if args.scenario in ('reroute', 'wrong_reroute', 'unknown_reroute'):
+                    note('model/rerouted', {**notify, 'turnId': 'wrong-turn' if args.scenario == 'wrong_reroute' else 'turn-exact', 'fromModel': 'gpt-6.1-sol', 'toModel': 'unknown-unreviewed-model' if args.scenario == 'unknown_reroute' else 'gpt-6.1-sol', 'reason': 'highRiskCyberActivity'})
                 if args.scenario == 'compaction':
                     note('thread/compacted', notify)
             if args.scenario == 'noise':

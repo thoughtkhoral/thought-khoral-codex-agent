@@ -552,3 +552,49 @@ superseding the earlier Task 6 transport image above. Archive/version/both schem
 checks and network-none/read-only package verification pass; unconfigured startup
 exits 1 before inference. Detailed evidence preserves both earlier image identities.
 No provider use, service activation or publication occurred.
+
+## Task 8 tool-policy correction (2026-10-07)
+
+The approved initial no-tools requirement needs both feature controls and pinned
+model metadata. Codex0.160.0 selects apply_patch and other handlers from model
+metadata independently of some feature flags. The Task6 version-only package is
+therefore insufficient for deployment admission.
+
+The worker now vendors the exact bundled model catalog from upstream tree
+`a956835d020762cb2b570053af06f643a11c0ecc`, retaining all non-tool fields. It changes
+only shell_type, apply_patch_tool_type, experimental_supported_tools, tool_mode,
+supports_search_tool and multi_agent_version. Startup uses an immutable, hashed
+restricted catalog and explicit controls for tools, agents, extensions and
+external discovery. A static catalog prevents unsanitized refresh/merge. Native
+`model/list` still supplies public IDs/efforts; execution intersects that native
+catalog with deployment admission and the exact reviewed metadata/capture cases.
+Unknown, prefixed/namespaced or unreviewed models/efforts fail closed. Known
+admitted model changes retain the existing effective-settings semantics.
+
+[Actual native request evidence](../../../contracts/codex-app-server-0.160.0/tool-policy-proof-aarch64.json)
+binds the Linuxaarch64 CLI binary, catalog and controls to44 completed synthetic
+model/effort cases across eight visible models, plus a fresh-process resume.
+All nested provider tool arrays were empty. This is a loopback capture under
+`--network none`, with no provider credential or inference. Native Ultra settings
+remain Ultra; the pinned CLI resolves their wire effort through the preserved
+model metadata (valid override, then max, then last non-Ultra, then medium).
+The test records both values. No account model access is established.
+
+`--verify-package` validates version/UID, installed catalog/controls/proof bytes,
+and the actual CLI binary digest before printing the required empty-tool marker.
+The runtime service checks the same package binding before opening its endpoint.
+Linuxx86_64 has no captured binary evidence in this change and fails package
+admission until an equivalent reviewed capture is added. No architecture coverage
+is inferred from the archive pin or source inspection.
+
+The reproducible [capture harness](../../../scripts/test-native-tool-policy.py),
+[policy checker](../../../scripts/check_tool_policy.py) and
+[provenance](../../../contracts/codex-app-server-0.160.0/TOOL_POLICY.md)
+record this narrow correction. The production provider origin remains fixed.
+
+The actual native harness also injected six unsolicited function calls: apply_patch,
+exec_command, shell, exec, client_tool and an MCP canary. Each produced a native
+unknown/unsupported tool result tied to its call ID and tool name; no client tool
+request or filesystem canary occurred. Worker protocol regression tests separately
+reject forbidden tool/approval events. This is representative negative handler
+coverage, not a claim that every possible hostile native event was enumerated.

@@ -29,6 +29,7 @@ COPY --from=build /usr/local/bin/codex /usr/local/bin/
 COPY LICENSE NOTICE THIRD_PARTY_NOTICES.md /usr/share/licenses/thought-khoral-codex-agent/
 COPY licenses/ /usr/share/licenses/thought-khoral-codex-agent/dependencies/
 COPY contracts/codex-app-server-0.160.0/LICENSE contracts/codex-app-server-0.160.0/NOTICE /usr/share/licenses/thought-khoral-codex-agent/codex/
+COPY contracts/codex-app-server-0.160.0/restricted-models.json contracts/codex-app-server-0.160.0/tool-controls.json contracts/codex-app-server-0.160.0/tool-policy-proof-aarch64.json /opt/thought-khoral-codex/
 WORKDIR /opt/thought-khoral-codex/workspace
 USER 10003:10003
 EXPOSE 9091

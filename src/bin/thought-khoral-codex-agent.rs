@@ -36,6 +36,8 @@ async fn run() -> Result<(), WorkerError> {
         if unsafe { libc::geteuid() } != 10003 || unsafe { libc::getegid() } != 10003 {
             return Err(WorkerError::Forbidden);
         }
+        thought_khoral_codex_agent::tool_policy::verify_installed_package()?;
+        println!("tool policy verified; exposed tools: []");
         println!("worker package verified; codex-cli 0.160.0; uid/gid 10003; no inference");
         return Ok(());
     }
@@ -45,6 +47,7 @@ async fn run() -> Result<(), WorkerError> {
     if unsafe { libc::geteuid() } != 10003 || unsafe { libc::getegid() } != 10003 {
         return Err(WorkerError::Forbidden);
     }
+    thought_khoral_codex_agent::tool_policy::verify_installed_package()?;
     unsafe {
         libc::umask(0o077);
     }

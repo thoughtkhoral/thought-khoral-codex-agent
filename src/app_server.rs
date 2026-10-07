@@ -143,6 +143,7 @@ impl AppServer {
         let mut process = command(&config);
         process.args(["app-server", "--listen", "stdio://"]);
         let mut overrides = tool_overrides();
+        overrides["model_catalog_json"] = json!(config.tool_catalog);
         if config.provider.is_some() {
             overrides["model_provider"] = serde_json::json!("thought_khoral_openai");
             overrides["model_providers"] = serde_json::json!({"thought_khoral_openai":{
@@ -388,7 +389,9 @@ impl AppServer {
                 .as_str()
                 .ok_or(RuntimeError::InvalidTaskInput)?,
         )?;
+        crate::tool_policy::validate_selection(&selected.model, Some(&selected.effort))?;
         let mut config = tool_overrides();
+        config["model_catalog_json"] = json!(self.config.tool_catalog);
         config["model_reasoning_effort"] = json!(selected.effort);
         let mut params = json!({"model":selected.model,"approvalPolicy":"never","sandbox":"read-only","cwd":self.config.working_directory,"config":config,"baseInstructions":INSTRUCTIONS,"developerInstructions":null});
         let response = if let Some(thread) = &request.thread_id {
@@ -432,6 +435,10 @@ impl AppServer {
         {
             return Err(RuntimeError::RuntimeUnavailable);
         }
+        crate::tool_policy::validate_selection(
+            &selected.model,
+            response["reasoningEffort"].as_str(),
+        )?;
         self.thread = Some(thread.clone());
         let mut configured_model = response["model"].as_str().unwrap().to_owned();
         let mut settings = catalog.normalize_settings(
@@ -550,6 +557,16 @@ impl AppServer {
                     {
                         return Err(RuntimeError::RuntimeUnavailable);
                     }
+                    let actual_model = report["model"].as_str().unwrap_or("");
+                    crate::tool_policy::validate_selection(
+                        actual_model,
+                        report["effort"].as_str(),
+                    )?;
+                    if catalog.normalize_settings(actual_model, report["effort"].as_str())["model"]
+                        .is_null()
+                    {
+                        return Err(RuntimeError::InvalidTaskInput);
+                    }
                     let rerouted = settings["reroutedModel"].clone();
                     let new_model = report["model"].as_str().unwrap_or("");
                     settings = catalog.normalize_settings(
@@ -568,6 +585,12 @@ impl AppServer {
                         .as_str()
                         .filter(|id| !id.is_empty() && id.chars().count() <= 128)
                         .ok_or(RuntimeError::RuntimeUnavailable)?;
+                    crate::tool_policy::validate_selection(model, Some(&selected.effort))?;
+                    if catalog.normalize_settings(model, Some(&selected.effort))["confirmation"]
+                        != "confirmed"
+                    {
+                        return Err(RuntimeError::InvalidTaskInput);
+                    }
                     settings["reroutedModel"] = json!(model);
                     usage.reset(model.to_owned());
                 }
@@ -796,6 +819,11 @@ mod lifecycle_tests {
         std::fs::create_dir(&cwd).unwrap();
         std::fs::create_dir(&home).unwrap();
         let mut config = Config::new("/usr/bin/python3".into(), cwd, home);
+        config.tool_catalog = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/contracts/codex-app-server-0.160.0/restricted-models.json"
+        )
+        .into();
         config.arguments = vec![
             concat!(
                 env!("CARGO_MANIFEST_DIR"),

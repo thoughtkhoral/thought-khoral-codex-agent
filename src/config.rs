@@ -7,6 +7,7 @@ pub struct Config {
     pub arguments: Vec<OsString>,
     pub working_directory: PathBuf,
     pub native_home: PathBuf,
+    pub tool_catalog: PathBuf,
     pub deadline: Duration,
     pub interrupt_grace: Duration,
     pub max_line_bytes: usize,
@@ -23,6 +24,7 @@ impl Config {
             arguments: vec![],
             working_directory,
             native_home,
+            tool_catalog: crate::tool_policy::CATALOG_PATH.into(),
             deadline: Duration::from_secs(180),
             interrupt_grace: Duration::from_secs(5),
             max_line_bytes: 1_048_576,
@@ -53,6 +55,7 @@ impl Config {
         {
             return Err(RuntimeError::InvalidTaskInput);
         }
+        crate::tool_policy::verify_catalog(&self.tool_catalog)?;
         let cwd = std::fs::canonicalize(&self.working_directory)?;
         let home = std::fs::canonicalize(&self.native_home)?;
         if !cwd.is_dir() || !home.is_dir() || cwd.starts_with(&home) || home.starts_with(&cwd) {
@@ -63,35 +66,7 @@ impl Config {
 }
 /// Explicit pinned controls; live verification remains a deployment gate.
 pub(crate) fn tool_overrides() -> serde_json::Value {
-    let names = [
-        "shell_tool",
-        "unified_exec",
-        "view_image",
-        "apps",
-        "plugins",
-        "hooks",
-        "browser_use",
-        "browser_use_external",
-        "browser_use_full_cdp_access",
-        "in_app_browser",
-        "computer_use",
-        "code_mode_host",
-        "multi_agent",
-        "multi_agent_v2",
-        "image_generation",
-        "remote_plugin",
-        "plugin_sharing",
-        "sleep_tool",
-        "goals",
-        "tool_suggest",
-        "workspace_dependencies",
-        "realtime_conversation",
-    ];
-    let features = names
-        .into_iter()
-        .map(|name| (name.to_owned(), serde_json::Value::Bool(false)))
-        .collect::<serde_json::Map<_, _>>();
-    serde_json::json!({"features":features,"web_search":"disabled","mcp_servers":{},"plugins":{},"project_doc_max_bytes":0,"shell_environment_policy":{"inherit":"none"}})
+    serde_json::from_str(crate::tool_policy::CONTROLS).expect("pinned tool controls")
 }
 
 pub struct ProviderCredentials {

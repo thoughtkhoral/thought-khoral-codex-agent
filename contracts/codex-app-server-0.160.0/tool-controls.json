@@ -1,0 +1,74 @@
+{
+  "agents": {
+    "enabled": false
+  },
+  "cloud": {
+    "skills": {
+      "enabled": false
+    }
+  },
+  "features": {
+    "agent_message_board": false,
+    "api_key_model_discovery": false,
+    "apps": false,
+    "browser_use": false,
+    "browser_use_external": false,
+    "browser_use_full_cdp_access": false,
+    "code_mode": false,
+    "code_mode_host": false,
+    "code_mode_only": false,
+    "computer_use": false,
+    "context_management": false,
+    "current_time_reminder": false,
+    "deferred_executor": false,
+    "executor_capability_discovery": false,
+    "goals": false,
+    "hooks": false,
+    "image_generation": false,
+    "in_app_browser": false,
+    "memories": false,
+    "multi_agent": false,
+    "multi_agent_v2": false,
+    "plugin_hooks": false,
+    "plugin_sharing": false,
+    "plugins": false,
+    "realtime_conversation": false,
+    "remote_plugin": false,
+    "request_permissions_tool": false,
+    "send_message_to_user_async": false,
+    "shell_snapshot": false,
+    "shell_tool": false,
+    "skill_mcp_dependency_install": false,
+    "skill_search": false,
+    "skip_host_skill_discovery": true,
+    "sleep_tool": false,
+    "standalone_web_search": false,
+    "token_budget": false,
+    "tool_suggest": false,
+    "unified_exec": false,
+    "view_image": false,
+    "workspace_dependencies": false
+  },
+  "mcp_servers": {},
+  "model_catalog_json": "/opt/thought-khoral-codex/restricted-models.json",
+  "plugins": {},
+  "project_doc_max_bytes": 0,
+  "shell_environment_policy": {
+    "inherit": "none"
+  },
+  "skills": {
+    "bundled": {
+      "enabled": false
+    },
+    "include_instructions": false
+  },
+  "tools": {
+    "experimental_request_user_input": {
+      "enabled": false
+    },
+    "update_plan": {
+      "enabled": false
+    }
+  },
+  "web_search": "disabled"
+}

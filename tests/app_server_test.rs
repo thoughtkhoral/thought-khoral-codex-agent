@@ -50,15 +50,19 @@ async fn real_process_requests_are_ordered_explicit_and_deliver_one_trigger() {
         start["config"]["features"]
             .as_object()
             .unwrap()
-            .values()
-            .all(|value| value == false)
+            .iter()
+            .all(|(key, value)| if key == "skip_host_skill_discovery" {
+                value == true
+            } else {
+                value == false
+            })
     );
     assert!(
         records
             .iter()
             .all(|record| record["environment"]["operatorSecretPresent"] == false)
     );
-    assert_eq!(start["model"], "test-native-model");
+    assert_eq!(start["model"], "gpt-6.1-sol");
     assert_eq!(start["config"]["model_reasoning_effort"], "medium");
     let turn = &records[5]["request"]["params"];
     assert_eq!(turn["effort"], "medium");
@@ -447,10 +451,7 @@ async fn bound_reroute_and_compaction_invalidate_usage_without_changing_selectio
             } else {
                 assert!(reply["usage"].is_null());
                 if scenario == "reroute" {
-                    assert_eq!(
-                        reply["effectiveSettings"]["reroutedModel"],
-                        "reported-runtime-model"
-                    );
+                    assert_eq!(reply["effectiveSettings"]["reroutedModel"], "gpt-6.1-sol");
                 }
             }
         }

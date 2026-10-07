@@ -9,3 +9,5 @@ pub mod receipts;
 pub mod worker;
 
 pub mod a2a_service;
+
+pub mod tool_policy;

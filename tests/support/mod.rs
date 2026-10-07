@@ -18,6 +18,10 @@ impl Fixture {
         std::fs::create_dir(&home).unwrap();
         let capture = directory.path().join("requests.jsonl");
         let mut config = Config::new(PathBuf::from("/usr/bin/python3"), cwd, home);
+        config.tool_catalog = PathBuf::from(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/contracts/codex-app-server-0.160.0/restricted-models.json"
+        ));
         config.arguments = vec![
             OsString::from(concat!(
                 env!("CARGO_MANIFEST_DIR"),

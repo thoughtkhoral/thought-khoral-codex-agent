@@ -27,3 +27,8 @@ binary. Codex LICENSE/NOTICE and the MIT license from its checksum-verified
 Ratatui 0.30.2 crate are retained in the image. Debian package copyright files
 remain with the runtime base. Run `python3 scripts/check_dependency_notices.py`
 when verifying or changing dependencies.
+
+The pinned OpenAI Codex compatibility directory also retains its Apache-2.0
+bundled model catalog, with six documented tool-selection-field modifications.
+See `contracts/codex-app-server-0.160.0/TOOL_POLICY.md`; its existing upstream
+LICENSE/NOTICE files apply to these additional source-derived artifacts.

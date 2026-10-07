@@ -7,7 +7,8 @@ Contribution: [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-ag
 Task 5 adds the independent worker, authenticated A2A v1 JSON-RPC service,
 worker-owned SQLite receipts and image. Tests use a synthetic subprocess and
 real temporary SQLite files. They do not call a provider. Deployment activation,
-egress/tool isolation and end-to-end interoperability remain later gates.
+live provider execution and deployment activation remain later gates. Task8 now
+verifies the initial tool policy for the reviewed Linuxaarch64 package.
 
 ## Durable boundaries
 
@@ -123,3 +124,20 @@ records the ARM64 local image identity and exact checked release/schema hashes.
 Overlapping builds exposed overly short fixture deadlines; worker fixtures now
 use ten seconds and the SQLite synchronization wait is bounded. The full suite
 also needs process inspection for its descendant-reaping check.
+
+## Task 8 package admission
+
+The [governing runtime design](../.ai/specs/how/codex-chat-agent.md) records the
+pinned metadata correction needed to remove all initial tools. A hashed static
+catalog preserves upstream non-tool metadata while disabling model-selected tool
+paths; explicit controls disable tools, agents, extensions and remote discovery.
+Native model IDs/efforts still come from `model/list`. Exact admission and reviewed
+capture coverage apply before execution and to reported model changes.
+
+The actual CLI capture covered44 visible model/effort cases, a fresh-process
+resume, and six unsolicited function calls. Those calls returned native
+unknown/unsupported-tool outputs and did not run the canary. Package verification
+binds the installed CLI binary, catalog, controls and this evidence. Its new
+empty-tool marker is required by platform startup. Evidence covers Linuxaarch64;
+Linuxx86_64 fails closed pending a reviewed equivalent capture. No provider
+inference or account-access verification is implied.

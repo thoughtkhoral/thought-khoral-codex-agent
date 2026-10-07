@@ -11,7 +11,9 @@ on 2026-10-05 under [issue 1](https://github.com/thoughtkhoral/thought-khoral-co
 independent packaging. End-to-end integration and production deployment remain
 unimplemented. The local Task 5 branch is `codex-worker-receipts`. Task 6 corrects the private
 A2A envelope and committed runtime binding on `codex-worker-transport-contract`,
-as recorded in the [runtime design](how/codex-chat-agent.md).
+as recorded in the [runtime design](how/codex-chat-agent.md). Task8 supplies the
+verified initial tool-disable correction on `codex-worker-tool-policy`; its
+actual binary evidence is limited to Linuxaarch64 and synthetic local transport.
 
 ## Approved foundation
 
