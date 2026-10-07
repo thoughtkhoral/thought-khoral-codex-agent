@@ -22,9 +22,10 @@ artifact remains unpublished; packaged-stack and separately authorized live
 verification remain pending. This remains an experimental POC, not a production
 readiness claim.
 
-For a concise summary of project goals, component ownership, demonstrated
-evidence, remaining Task 9 gates, and the later guided-workspace milestone, see
-the [project status guide](../../docs/project-status.md).
+For the current goal, project ownership, evidence limits, and remaining
+Task 9 gates across the workspace, see the [shared cross-project status guide](https://github.com/thoughtkhoral/thought-khoral/blob/main/docs/codex-conversation-status.md).
+For this repository's worker implementation, see the [Codex component status
+guide](../../docs/project-status.md).
 
 ## Approved foundation
 

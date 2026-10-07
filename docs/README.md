@@ -7,7 +7,8 @@ not generate them or rewrite their sources.
 | Document | Governing specification |
 | --- | --- |
 | [Repository README](../README.md) | [Public documentation](../.ai/specs/what/public-documentation.md) |
-| [Project status and next development](project-status.md) | [Chat requirements](../.ai/specs/what/codex-chat-agent.md), [runtime design](../.ai/specs/how/codex-chat-agent.md), and [coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md) |
+| [Cross-project Codex conversation status](https://github.com/thoughtkhoral/thought-khoral/blob/main/docs/codex-conversation-status.md) | Root and child Codex conversation specifications and coordinated plan |
+| [Codex worker component status](project-status.md) | [Chat requirements](../.ai/specs/what/codex-chat-agent.md), [runtime design](../.ai/specs/how/codex-chat-agent.md), and [coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md) |
 | [Architecture](architecture.md) | Approved [runtime design](../.ai/specs/how/codex-chat-agent.md) |
 | [Worker runtime](runtime.md) | Approved [runtime design](../.ai/specs/how/codex-chat-agent.md) |
 | [Adapter library](adapter.md) | Approved [runtime design](../.ai/specs/how/codex-chat-agent.md) |

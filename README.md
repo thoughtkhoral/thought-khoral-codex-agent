@@ -23,15 +23,17 @@ published v1.0.0 artifact remains unchanged.
 
 The milestone-one goal is to let humans explicitly address Codex in a room and
 have it use authorized room-wide conversation history, with shared continue and
-fresh-session controls. The experimental implementation, what has been
-verified, and remaining work are summarized in the [project status guide](docs/project-status.md).
-A later, separately scoped extension may add a reviewed directory of
+fresh-session controls. The cross-project implementation, evidence limits, and
+remaining gates are summarized in the [shared ThoughtKhoral status guide](https://github.com/thoughtkhoral/thought-khoral/blob/main/docs/codex-conversation-status.md).
+This repository's [component status guide](docs/project-status.md) focuses on
+the worker boundary. A later, separately scoped extension may add reviewed
 specifications, instructions, and curated memory.
 
 ## Start here
 
 - [Specification index](.ai/specs/README.md) — source of truth and approval status.
-- [Project status](docs/project-status.md) — implemented components, evidence limits, and remaining tasks.
+- [Cross-project Codex conversation status](https://github.com/thoughtkhoral/thought-khoral/blob/main/docs/codex-conversation-status.md) — ownership, evidence, and remaining milestone gates.
+- [Codex component status](docs/project-status.md) — this repository's worker implementation.
 - [Architecture](docs/architecture.md) — runtime boundaries and data flow.
 - [Documentation workflow](docs/README.md) — specification-to-document traceability.
 - [Contributing](CONTRIBUTING.md) — issue-first contribution and verification.
