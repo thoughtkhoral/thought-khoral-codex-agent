@@ -1,12 +1,11 @@
 # Codex agent architecture
 
-**Approved milestone-one design; provider-free agent/worker and reviewed room integration are in local mains.**
-The broker, mediator, UI, and opt-in platform candidates were merged into their
-owning repositories' local `main` branches under explicit authorization on
-2026-10-07. Exact commits and provider-free evidence are recorded in the
-coordinated plan. No branches were pushed. The v1.1 contract remains unpublished;
-packaged-stack and separately authorized live checks remain pending. This document derives from
-the local specifications and records the separate integration/release gates.
+**Approved milestone-one design; experimental provider-free agent/worker and reviewed room-integration POC commits are pushed to owning GitHub `main` branches.**
+The reviewed integration was pushed on 2026-10-07. Exact commits and
+provider-free evidence are recorded in the coordinated plan. No v1.1 contract
+release or tag exists; packaged-stack and separately authorized live checks
+remain pending. This is not a production-readiness claim. This document derives
+from the local specifications and records the separate integration/release gates.
 
 ## Responsibilities
 
@@ -66,11 +65,10 @@ chat uses fixed instructions and does not write memory or mount a host repositor
 ## Approval boundary
 
 The exact integration profile is an approved coordinated design; the local
-profile records worker-specific obligations. The maintainer approved the
-provider-free agent/worker implementation on local main. Reviewed gateway,
-broker, UI and platform integration is merged into each owning repository's
-local `main`; the v1.1 candidate remains unpublished. No push, packaged-stack
-activation, or live-provider interoperability is claimed.
+profile records worker-specific obligations. The provider-free agent/worker,
+gateway, broker, UI, and platform integration is pushed to each owning GitHub
+`main` for experimental POC use. No v1.1 contract release or tag exists.
+Packaged-stack activation and live-provider interoperability remain unverified.
 
 Source: approved [chat requirements](../.ai/specs/what/codex-chat-agent.md),
 [runtime design](../.ai/specs/how/codex-chat-agent.md), and

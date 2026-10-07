@@ -14,11 +14,13 @@ The reviewed broker, mediator, UI, and opt-in platform candidates are merged
 into their owning repositories' local `main` branches under explicit user
 authorization on 2026-10-07. Exact source and merge commits are recorded in the
 [coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md).
-This local integration has not been pushed. The Task 8 pinned-worker tool-policy
-correction and Task 9 worker recovery fix remain in the local worker history.
-The F1 correction and visible defaults discovery passed provider-free composed
-verification. The v1.1 contract remains unpublished; packaged-stack and
-separately authorized live verification remain pending.
+The integration was pushed to the owning GitHub `main` branches on 2026-10-07.
+The Task 8 pinned-worker tool-policy correction and Task 9 worker recovery fix are
+in this repository's pushed history. The F1 correction and visible defaults
+discovery passed provider-free composed verification. The v1.1 contract release
+artifact remains unpublished; packaged-stack and separately authorized live
+verification remain pending. This remains an experimental POC, not a production
+readiness claim.
 
 ## Approved foundation
 

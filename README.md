@@ -6,23 +6,20 @@ gateway; it does not access room storage directly.
 
 ## Status
 
-**Provider-free Codex agent and worker runtime is merged into local `main`.**
-The provider-free adapter is committed at `e61a5f79568ce24e411f559efc5290000638395a`
-and merged from `codex-app-server-adapter`. See the [execution checkpoint](.ai/specs/how/codex-chat-agent.md).
-Repository governance, documentation checks, and Apache 2.0 licensing are
-established. The provider-free adapter/worker, broker, mediator, UI, and opt-in
-platform candidates are merged into their owning repositories' local `main`
-branches from the reviewed commits. This local integration was authorized on
-2026-10-07 and is recorded in the [coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md).
-The branches have not been pushed. The F1 UI correction and visible defaults
-discovery are accepted for this local synthetic candidate; the v1.1 contract
-remains unpublished. Packaged-stack verification and separately authorized live
-evidence remain pending. The milestone-one
-specifications and coordinated plan were approved on 2026-10-05 under
+**Experimental provider-free Codex POC and reviewed room-integration commits are pushed to the owning GitHub `main` branches.**
+The adapter/worker, broker, mediator, UI, and opt-in platform candidates were
+reviewed and pushed on 2026-10-07; exact commits and evidence are in the
+[coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md).
+The F1 UI correction and visible defaults discovery passed provider-free
+synthetic verification. The v1.1 candidate source is on `main`, but no v1.1
+release or tag exists; packaged-stack and separately authorized live
+verification remain pending. This is experimental POC code, not a production
+readiness claim. The milestone-one specifications and coordinated plan were
+approved on 2026-10-05 under
 [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1).
 The [conversation profile v1.0.0](https://github.com/thoughtkhoral/thought-khoral-contracts/releases/tag/thought-khoral-agent-conversation-v1.0.0)
-is published and verified. Consumer repositories record immutable pins; the
-v1.1 defaults candidate remains local and unpublished.
+is published and verified. Consumer repositories record immutable pins. The
+published v1.0.0 artifact remains unchanged.
 
 The proposed chat experience makes Codex a room participant that responds when
 explicitly addressed, using authorized room-wide discussion as context. Its

@@ -16,13 +16,12 @@ not generate them or rewrite their sources.
 | [Contribution guidance](../CONTRIBUTING.md) | [Governance](../.ai/specs/decisions/001-governance-and-license.md) |
 | [Agent instructions](../AGENTS.md) | [Foundation design](../.ai/specs/how/repository-foundation.md) |
 
-The provider-free adapter/worker runtime is merged into this repository's local
-`main`; the reviewed broker, mediator, UI and platform candidates are merged into
-their owning repositories' local `main` branches. The [runtime checkpoint](../.ai/specs/how/codex-chat-agent.md)
-and [coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md)
-record the exact commits and evidence. No integration branch has been pushed.
-The v1.1 contract remains unpublished; packaged-stack and separately authorized
-live checks remain pending.
+The provider-free adapter/worker runtime and reviewed broker, mediator, UI, and
+platform POC commits are pushed to their owning GitHub `main` branches. The
+[runtime checkpoint](../.ai/specs/how/codex-chat-agent.md) and [coordinated
+plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md)
+record the exact commits and evidence. The v1.1 contract release artifact remains
+unpublished; packaged-stack and separately authorized live checks remain pending.
 
 Update the applicable What, How, and decision first. Once approved, implement
 the change and update its derived docs. Draft descriptions remain explicitly

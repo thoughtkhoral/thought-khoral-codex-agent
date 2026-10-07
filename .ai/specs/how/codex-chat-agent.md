@@ -825,3 +825,13 @@ source commits, merge commits, and verification are recorded in the
 [coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md).
 These local commits have not been pushed. The v1.1 contract remains unreleased;
 packaged-stack, provider, activation and publication gates remain open.
+
+## Pushed POC checkpoint — 2026-10-07
+
+The provider-free adapter/worker and reviewed room-integration commits are pushed
+to their owning GitHub `main` branches. This repository's current pushed
+integration checkpoint is `c2c0660948673b573de753ed66fa6a1fadda24e7`; exact
+component commits are in the [coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md).
+The v1.1 contract release/tag does not exist. Provider-free and synthetic
+verification passed as recorded above; packaged-stack and separately authorized
+live verification remain open. No production-readiness claim is made.
