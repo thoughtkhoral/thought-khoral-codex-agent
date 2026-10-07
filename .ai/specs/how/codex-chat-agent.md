@@ -598,3 +598,17 @@ unknown/unsupported tool result tied to its call ID and tool name; no client too
 request or filesystem canary occurred. Worker protocol regression tests separately
 reject forbidden tool/approval events. This is representative negative handler
 coverage, not a claim that every possible hostile native event was enumerated.
+
+
+## Completed-result replacement clarification (2026-10-07)
+
+A completed receipt can remain pending broker acknowledgement after the broker
+terminally rejects that task. Cancellation of a completed task preserves its
+receipt, as required by the published profile. A subsequently authenticated
+explicit New baseline may replace the room/agent mapping only with a different
+conversation ID and strictly greater generation. Reserved/running tasks remain
+exclusive. Continuation of pending acknowledgement stays blocked. Replacement
+clears the native mapping and starts a distinct thread; completed receipts and
+conflicting-ack checks remain intact. A late old acknowledgement can update
+only its old receipt, never ready the newer conversation. Task/get and receipt
+projection retain the old completed result; stale execution cannot reopen it.

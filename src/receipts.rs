@@ -136,20 +136,24 @@ impl ReceiptStore {
         let mut thread = None;
         let mut prior_ready = false;
         if let Some(row) = &row {
-            if matches!(
-                get(row, "state")?.as_str(),
-                "reserved" | "running" | "pending_ack"
-            ) {
+            let state = get(row, "state")?;
+            if matches!(state.as_str(), "reserved" | "running") {
                 return Err(WorkerError::ConversationBusy);
             }
             if new {
+                // Broker generations increase for the whole room/agent scope. A
+                // fresh authorized baseline can supersede an uncommittable
+                // completed result, but cannot reuse its native history.
                 if get(row, "conversation_id")? == p["conversation"]["id"]
-                    && row.try_get::<i64, _>("generation")?
+                    || row.try_get::<i64, _>("generation")?
                         >= p["conversation"]["generation"].as_i64().unwrap()
                 {
                     return Err(WorkerError::ConversationStale);
                 }
             } else {
+                if state == "pending_ack" {
+                    return Err(WorkerError::ConversationBusy);
+                }
                 if get(row, "conversation_id")? == p["conversation"]["id"]
                     && row.try_get::<i64, _>("generation")?
                         == p["conversation"]["generation"].as_i64().unwrap()

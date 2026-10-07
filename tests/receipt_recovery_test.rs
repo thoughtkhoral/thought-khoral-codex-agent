@@ -487,3 +487,130 @@ async fn cancellation_before_completion_commit_must_prevent_success() {
         "cancel returned {cancelled:?}; execution committed {output:?}"
     );
 }
+
+fn fresh_generation(packet: &Value, generation: u64) -> Value {
+    let mut fresh = packet.clone();
+    fresh["taskId"] = json!("00000029-1111-4111-8111-000000000029");
+    fresh["conversation"]["id"] = json!("00000030-1111-4111-8111-000000000030");
+    fresh["conversation"]["generation"] = json!(generation);
+    fresh["context"]["digest"] =
+        json!(thought_khoral_codex_agent::protocol::context_digest(&fresh).unwrap());
+    fresh
+}
+
+#[tokio::test]
+async fn newer_new_recovers_completed_pending_ack_without_reopening_old_history() {
+    let mut f = worker_fixture("success");
+    f.config.arguments.push("--persistent".into());
+    let db = f.directory.path().join("receipts.sqlite");
+    let packet = request().packet;
+    let worker = Worker::open(f.config.clone(), &db).await.unwrap();
+    let result = worker.execute(packet.clone()).await.unwrap();
+    let task = packet["taskId"].as_str().unwrap();
+    let receipt = worker.receipt(task).await.unwrap();
+    assert_eq!(
+        worker.cancel(task).await.unwrap(),
+        receipt,
+        "completed cancellation remains immutable"
+    );
+    let ack = acknowledgement(&packet, &result);
+    assert_eq!(
+        worker
+            .execute(continuation(&packet, &ack))
+            .await
+            .unwrap_err(),
+        WorkerError::ConversationBusy
+    );
+    let generation = packet["conversation"]["generation"].as_u64().unwrap();
+    for stale in [generation, generation.saturating_sub(1).max(1)] {
+        assert!(
+            worker
+                .execute(fresh_generation(&packet, stale))
+                .await
+                .is_err()
+        );
+    }
+    drop(worker);
+    let worker = Worker::open(f.config.clone(), &db).await.unwrap();
+    let fresh = fresh_generation(&packet, generation + 1);
+    worker
+        .execute(fresh.clone())
+        .await
+        .expect("newer authorized baseline must replace pending ack");
+    let new_receipt = worker
+        .receipt(fresh["taskId"].as_str().unwrap())
+        .await
+        .unwrap();
+    assert_ne!(
+        receipt["runtimeBinding"]["threadId"],
+        new_receipt["runtimeBinding"]["threadId"]
+    );
+    assert_eq!(worker.receipt(task).await.unwrap(), receipt);
+    assert_eq!(
+        worker.execute(packet.clone()).await.unwrap_err(),
+        WorkerError::ConversationStale
+    );
+    assert!(worker.execute(continuation(&packet, &ack)).await.is_err());
+    worker.acknowledge(task, ack.clone()).await.unwrap();
+    assert_eq!(
+        worker
+            .receipt(fresh["taskId"].as_str().unwrap())
+            .await
+            .unwrap(),
+        new_receipt,
+        "late old ack cannot ready the new conversation"
+    );
+    let mut conflict = ack;
+    conflict["replyEventId"] = json!("00000031-1111-4111-8111-000000000031");
+    assert_eq!(
+        worker.acknowledge(task, conflict).await.unwrap_err(),
+        WorkerError::DuplicateConflict
+    );
+    assert_eq!(
+        f.records()
+            .iter()
+            .filter(|r| r["request"]["method"] == "turn/start")
+            .count(),
+        2
+    );
+    assert_eq!(
+        f.records()
+            .iter()
+            .filter(|r| r["request"]["method"] == "thread/start")
+            .count(),
+        2
+    );
+    assert_eq!(
+        f.records()
+            .iter()
+            .filter(|r| r["request"]["method"] == "thread/resume")
+            .count(),
+        0
+    );
+}
+
+#[tokio::test]
+async fn newer_new_cannot_supersede_running_or_reserved_turn() {
+    for running in [false, true] {
+        let f = worker_fixture("success");
+        let packet = request().packet;
+        let store = ReceiptStore::open(&f.directory.path().join("receipts.sqlite"))
+            .await
+            .unwrap();
+        store.reserve(&packet).await.unwrap();
+        if running {
+            store
+                .submission_intent(packet["taskId"].as_str().unwrap(), "thread-exact")
+                .await
+                .unwrap();
+        }
+        let generation = packet["conversation"]["generation"].as_u64().unwrap();
+        assert_eq!(
+            store
+                .reserve(&fresh_generation(&packet, generation + 1))
+                .await
+                .unwrap_err(),
+            WorkerError::ConversationBusy
+        );
+    }
+}
