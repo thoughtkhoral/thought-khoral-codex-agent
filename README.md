@@ -21,16 +21,17 @@ The [conversation profile v1.0.0](https://github.com/thoughtkhoral/thought-khora
 is published and verified. Consumer repositories record immutable pins. The
 published v1.0.0 artifact remains unchanged.
 
-The proposed chat experience makes Codex a room participant that responds when
-explicitly addressed, using authorized room-wide discussion as context. Its
-proposed shared room session supports new and continued native threads, model
-and reasoning-effort selection, visible effective settings, and an estimated
-context-window indicator when runtime telemetry is available. A future extension
-adds a reviewed directory of specifications, instructions, and curated memory.
+The milestone-one goal is to let humans explicitly address Codex in a room and
+have it use authorized room-wide conversation history, with shared continue and
+fresh-session controls. The experimental implementation, what has been
+verified, and remaining work are summarized in the [project status guide](docs/project-status.md).
+A later, separately scoped extension may add a reviewed directory of
+specifications, instructions, and curated memory.
 
 ## Start here
 
 - [Specification index](.ai/specs/README.md) — source of truth and approval status.
+- [Project status](docs/project-status.md) — implemented components, evidence limits, and remaining tasks.
 - [Architecture](docs/architecture.md) — runtime boundaries and data flow.
 - [Documentation workflow](docs/README.md) — specification-to-document traceability.
 - [Contributing](CONTRIBUTING.md) — issue-first contribution and verification.
