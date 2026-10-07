@@ -145,3 +145,14 @@ inference or account-access verification is implied.
 The [Task8 image evidence](task8-image-evidence.json) records the reviewed local
 image ID and runtime source commit; the earlier Task6 image record is retained
 as historical evidence and does not pass the new tool-policy gate.
+
+## Task 9 recovery package
+
+The [Task9 image evidence](task9-image-evidence.json) binds the corrected receipt
+recovery runtime source to a newly built local immutable image. Its package
+verification ran with no network, a read-only filesystem, and all capabilities
+dropped; both admission markers passed. Default invocation still refuses
+activation. The installed native CLI, catalog and controls hashes match Task8.
+The unchanged native capture is reused with its original source and image
+attribution; it does not imply that the Task8 image contains the recovery fix.
+No provider call, service activation, publication, or x86_64 capture was performed.
