@@ -1,11 +1,11 @@
 # Codex agent architecture
 
-**Approved milestone-one design; provider-free agent/worker runtime is in local main.**
-Reviewed mediation implementation lives on an isolated local branch;
-UI and opt-in packaging are also committed locally; Task 9 synthetic verification
-and runtime corrections are also reviewed locally. The F1 UI correction and visible defaults discovery are accepted for the
-reviewed local synthetic candidate. Contract publication, whole packaged-stack and authorized live checks
-remain pending. This document derives from
+**Approved milestone-one design; provider-free agent/worker and reviewed room integration are in local mains.**
+The broker, mediator, UI, and opt-in platform candidates were merged into their
+owning repositories' local `main` branches under explicit authorization on
+2026-10-07. Exact commits and provider-free evidence are recorded in the
+coordinated plan. No branches were pushed. The v1.1 contract remains unpublished;
+packaged-stack and separately authorized live checks remain pending. This document derives from
 the local specifications and records the separate integration/release gates.
 
 ## Responsibilities
@@ -67,10 +67,10 @@ chat uses fixed instructions and does not write memory or mount a host repositor
 
 The exact integration profile is an approved coordinated design; the local
 profile records worker-specific obligations. The maintainer approved the
-provider-free agent/worker implementation on local main. Gateway, broker, UI
-and platform integration remains on separate reviewed component branches.
-No published candidate-contract release, packaged-stack or live-provider
-interoperability is claimed.
+provider-free agent/worker implementation on local main. Reviewed gateway,
+broker, UI and platform integration is merged into each owning repository's
+local `main`; the v1.1 candidate remains unpublished. No push, packaged-stack
+activation, or live-provider interoperability is claimed.
 
 Source: approved [chat requirements](../.ai/specs/what/codex-chat-agent.md),
 [runtime design](../.ai/specs/how/codex-chat-agent.md), and

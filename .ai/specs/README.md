@@ -10,14 +10,15 @@ The repository foundation is approved by the user's setup request on
 on 2026-10-05 under [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1). The provider-free Task 4 adapter and Task 5 worker transport, receipts and
 packaging are merged into this repository's local `main` from their reviewed
 branches; this repository now contains the provider-free agent/worker runtime.
-The Task 6 gateway mediation and broker catalog wiring remain on separate
-component branches; Tasks 7–8 UI and opt-in platform packaging are reviewed
-locally. The Task 8 pinned-worker tool-policy correction and Task 9 worker
-recovery fix are included in the local worker history. End-to-end service integration remains
-gated on the other components. Task 9 synthetic verification and runtime corrections are reviewed locally;
-The defaults amendment and its correction for UI finding F1 are accepted on
-reviewed local synthetic candidate branches. Contract publication, whole packaged-stack and authorized
-live checks remain pending.
+The reviewed broker, mediator, UI, and opt-in platform candidates are merged
+into their owning repositories' local `main` branches under explicit user
+authorization on 2026-10-07. Exact source and merge commits are recorded in the
+[coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md).
+This local integration has not been pushed. The Task 8 pinned-worker tool-policy
+correction and Task 9 worker recovery fix remain in the local worker history.
+The F1 correction and visible defaults discovery passed provider-free composed
+verification. The v1.1 contract remains unpublished; packaged-stack and
+separately authorized live verification remain pending.
 
 ## Approved foundation
 

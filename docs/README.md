@@ -17,11 +17,12 @@ not generate them or rewrite their sources.
 | [Agent instructions](../AGENTS.md) | [Foundation design](../.ai/specs/how/repository-foundation.md) |
 
 The provider-free adapter/worker runtime is merged into this repository's local
-`main`; the gateway, broker, UI and platform components remain on separate
-reviewed local branches. The [runtime checkpoint](../.ai/specs/how/codex-chat-agent.md)
-records scope and evidence. Task 9 synthetic verification and corrections are recorded; the F1 UI correction and visible defaults discovery are accepted for the
-reviewed local synthetic candidate. Contract publication, packaged-stack and authorized live
-checks remain pending.
+`main`; the reviewed broker, mediator, UI and platform candidates are merged into
+their owning repositories' local `main` branches. The [runtime checkpoint](../.ai/specs/how/codex-chat-agent.md)
+and [coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md)
+record the exact commits and evidence. No integration branch has been pushed.
+The v1.1 contract remains unpublished; packaged-stack and separately authorized
+live checks remain pending.
 
 Update the applicable What, How, and decision first. Once approved, implement
 the change and update its derived docs. Draft descriptions remain explicitly
