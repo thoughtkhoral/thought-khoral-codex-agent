@@ -17,9 +17,8 @@ broker catalog adapter are committed on isolated local branches. The worker
 transport correction and verified image are recorded in the same checkpoint.
 Tasks 7–8 UI and opt-in platform packaging remain on independent local branches.
 The reviewed worker tool-policy and recovery corrections are merged here. Task 9
-synthetic verification and runtime corrections are reviewed locally. Important UI
-finding F1 and resolved-default discovery are accepted on reviewed local
-synthetic candidate branches. Contract publication, whole packaged-stack and
+synthetic verification and runtime corrections are reviewed locally. The F1 UI correction and visible defaults discovery are accepted for the
+reviewed local synthetic candidate. Contract publication, whole packaged-stack and
 authorized live evidence remain pending. The milestone-one
 specifications and coordinated plan were approved on 2026-10-05 under
 [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1).

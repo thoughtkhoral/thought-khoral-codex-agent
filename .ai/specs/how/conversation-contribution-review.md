@@ -349,6 +349,9 @@ and separately authorized live verification; directory guidance remains later.
 
 ## Task 9 synthetic verification and correction checkpoint — 2026-10-07
 
+This review packet captures the pre-amendment state. The later approved defaults-discovery amendment and synthetic checkpoint supersede its F1/default-discovery disposition only; remaining Task 9 gates stay open.
+
+
 Provider-free checkpoint only; Task 9 and the milestone remain open.
 
 Task-scoped verification review: Approved. Broad implementation review: Partial

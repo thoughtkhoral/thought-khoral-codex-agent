@@ -15,8 +15,8 @@ component branches; Tasks 7–8 UI and opt-in platform packaging are reviewed
 locally. The Task 8 pinned-worker tool-policy correction and Task 9 worker
 recovery fix are included in the local worker history. End-to-end service integration remains
 gated on the other components. Task 9 synthetic verification and runtime corrections are reviewed locally;
-The defaults amendment and F1 are accepted on reviewed local synthetic
-candidate branches. Contract publication, whole packaged-stack and authorized
+The defaults amendment and its correction for UI finding F1 are accepted on
+reviewed local synthetic candidate branches. Contract publication, whole packaged-stack and authorized
 live checks remain pending.
 
 ## Approved foundation

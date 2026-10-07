@@ -19,9 +19,8 @@ not generate them or rewrite their sources.
 The provider-free adapter/worker runtime is merged into this repository's local
 `main`; the gateway, broker, UI and platform components remain on separate
 reviewed local branches. The [runtime checkpoint](../.ai/specs/how/codex-chat-agent.md)
-records scope and evidence. Task 9 synthetic verification and corrections are recorded; Important UI finding
-F1 and resolved-default discovery are accepted on reviewed local synthetic
-candidate branches. Contract publication, packaged-stack and authorized live
+records scope and evidence. Task 9 synthetic verification and corrections are recorded; the F1 UI correction and visible defaults discovery are accepted for the
+reviewed local synthetic candidate. Contract publication, packaged-stack and authorized live
 checks remain pending.
 
 Update the applicable What, How, and decision first. Once approved, implement

@@ -636,6 +636,9 @@ coverage, not a claim that every possible hostile native event was enumerated.
 
 ## Task 9 synthetic verification and correction checkpoint — 2026-10-07
 
+The later defaults-discovery amendment and candidate checkpoint supersede this pre-amendment F1/default-discovery disposition only; Task 9 remains open for remaining gates.
+
+
 Provider-free checkpoint only; Task 9 and the milestone remain open.
 
 Task-scoped verification review: Approved. Broad implementation review: Partial
@@ -747,8 +750,9 @@ service activation is authorized. Whole milestone/Task9 acceptance remains open.
 ## Defaults discovery local synthetic checkpoint — 2026-10-07
 
 All four defaults-amendment tasks passed their independent reviews. The final
-whole-branch review passed. F1 (initial/New reasoning-only settings deadlock) and
-visible defaults discovery are accepted for this local synthetic candidate.
+whole-branch review passed. The amendment's correction for F1 (the initial/New reasoning-only settings
+deadlock) and visible defaults discovery are accepted for this local synthetic
+candidate.
 
 | Source | Exact local revision | Retained worktree |
 | --- | --- | --- |

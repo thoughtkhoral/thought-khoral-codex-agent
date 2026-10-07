@@ -3,9 +3,8 @@
 **Approved milestone-one design; provider-free agent/worker runtime is in local main.**
 Reviewed mediation implementation lives on an isolated local branch;
 UI and opt-in packaging are also committed locally; Task 9 synthetic verification
-and runtime corrections are also reviewed locally. Important UI finding F1
-and resolved-default discovery are accepted on reviewed local synthetic candidate
-branches. Contract publication, whole packaged-stack and authorized live checks
+and runtime corrections are also reviewed locally. The F1 UI correction and visible defaults discovery are accepted for the
+reviewed local synthetic candidate. Contract publication, whole packaged-stack and authorized live checks
 remain pending. This document derives from
 the local specifications and records the separate integration/release gates.
 
