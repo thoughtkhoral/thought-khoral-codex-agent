@@ -744,8 +744,9 @@ isolated consumers may pin a reproducible local candidate from an exact committe
 contracts revision, verified archive and per-file SHA-256 values, clearly marked
 unreleased. This exception is only for this amendment's local pre-publication
 development and synthetic testing. Published v1.0 provenance/bytes remain intact.
-No release publication, shipped interoperability, merge, push, provider use or
-service activation is authorized. Whole milestone/Task9 acceptance remains open.
+The later local merges do not authorize release publication, shipped
+interoperability, push, provider use or service activation. Whole
+milestone/Task9 acceptance remains open.
 
 ## Defaults discovery local synthetic checkpoint — 2026-10-07
 
@@ -816,10 +817,11 @@ working directories remain the separately scoped future extension.
 
 ## Local main integration checkpoint — 2026-10-07
 
-The user authorized committing the approved specifications and merging the
-reviewed `codex-final-conversation-worker` history to this repository's local
-`main`. This includes the provider-free adapter, durable worker, transport and
-tool-policy corrections, and recovery fix. It does not merge or activate the
-separate contracts, broker, mediator, UI or platform repositories. The defaults
-amendment remains an unreleased local candidate; package/live and publication
-gates remain open.
+The user first authorized merging the reviewed provider-free adapter and worker
+history into this repository's local `main`. On 2026-10-07 the user also
+authorized local merges of the reviewed contracts, broker, mediator, UI and
+platform candidates into their owning repositories' `main` branches. The exact
+source commits, merge commits, and verification are recorded in the
+[coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md).
+These local commits have not been pushed. The v1.1 contract remains unreleased;
+packaged-stack, provider, activation and publication gates remain open.
