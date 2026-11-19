@@ -4,6 +4,12 @@ Status: accepted by the maintainer in this working session on 2026-11-19.
 Implementation and local verification are authorized; publication and live
 activation retain their separate gates.
 
+Later checkpoint: separately authorized publication and native Linux CI passed.
+The [native acceptance How](linux-worker-acceptance.md) retains actual AMD64 and
+ARM64 final-lock builds/admission, exact recaptures, four compiler cells and
+cleanup at `9bcdbde`. The emulated/local evidence below remains historical;
+live-provider and packaged room-stack gates remain open.
+
 Approval record: the maintainer replied "approved" to the two concrete
 architecture-evidence and platform-build amendments before implementation.
 This continues existing accepted [worker contribution issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1).
@@ -20,7 +26,7 @@ policy.
 
 ## Observed problem
 
-The latest GitHub [provider-free runtime run](https://github.com/thoughtkhoral/thought-khoral-codex-agent/actions/runs/37699754057)
+The pre-correction GitHub [provider-free runtime run](https://github.com/thoughtkhoral/thought-khoral-codex-agent/actions/runs/37699754057)
 builds its Linux x86_64 worker image, then fails `--verify-package` with
 `runtime_unavailable`. The image includes only `tool-policy-proof-aarch64.json`;
 the verifier compares the installed CLI digest with that ARM64 capture. The

@@ -48,11 +48,12 @@ packaged-stack/browser/live acceptance remain separate gates.
 
 - [Rust 1.85 dependency-lock compatibility](how/rust-185-lock-compatibility-proposal.md)
   was approved on 2026-11-19 for the tested transitive pin, retained legal
-  inventory refresh, and final-source verification. Linux evidence remains
-  separately attributed.
+  inventory refresh, and final-source verification. Later final-lock Linux
+  minimum-version and package evidence is retained in the native acceptance How.
 - [Architecture-specific package evidence](how/x86-package-evidence-proposal.md)
-  was approved on 2026-11-19 for local implementation and verification. Native
-  x86_64 CI, publication, and live activation retain their separate gates.
+  was approved on 2026-11-19 for local implementation and verification. Later
+  publication/native x86_64 CI passed under the Linux acceptance How; live and
+  packaged room-stack activation remain separate gates.
 - [What: Codex chat conversations](what/codex-chat-agent.md)
 - [How: headless Codex chat agent](how/codex-chat-agent.md)
 - [How: room conversation integration profile](how/conversation-integration-profile.md)

@@ -4,10 +4,21 @@
 
 Approved for repository setup — user authorization on 2026-10-02.
 
+## Current applicability
+
+The foundation-only status/verification language below records the initial
+repository setup. Approved [milestone-one requirements](codex-chat-agent.md)
+and the [runtime How](../how/codex-chat-agent.md) subsequently authorized the
+implemented provider-free worker. Current documentation must report that
+implementation and the [native acceptance evidence](../how/linux-worker-acceptance.md)
+accurately, while preserving the open packaged room-stack/browser/live and
+release gates. Draft future guidance is not implementation authority.
+
 ## Purpose
 
 Explain this independent agent's intended role, current maturity, source-of-
-truth hierarchy, and contribution path without claiming a working runtime.
+truth hierarchy and contribution path. Runtime/acceptance claims require the
+applicable approved specs and attributed evidence, not the original scaffold.
 
 ## Acceptance criteria
 

@@ -53,4 +53,7 @@ requires server-side branch protection and is not claimed by this scaffold.
 Run the documentation check, demonstrate that a missing relative link is
 rejected, run `git diff --check`, compare the full Apache license text to its
 canonical source, and verify remote default branch, license recognition,
-published commit, and CI status. Do not claim runtime tests have passed.
+published commit, and CI status. These foundation checks alone do not establish
+runtime results. The later approved runtime How and native acceptance record
+govern implemented-worker verification; the original foundation is historical
+setup scope, not a prohibition on attributed later runtime evidence.

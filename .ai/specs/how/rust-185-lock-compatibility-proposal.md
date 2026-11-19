@@ -4,6 +4,12 @@ Status: accepted by the maintainer in this working session on 2026-11-19.
 The exact dependency-lock correction, legal inventory refresh, and local
 verification are authorized. Publication and provider activation remain separate.
 
+Later checkpoint: publication/native Linux execution were authorized separately.
+The [native acceptance How](linux-worker-acceptance.md) records four successful
+native AMD64/ARM64 Rust 1.85.0/1.93.1 cells and both final-lock package/capture
+jobs at `9bcdbde`. Earlier local-only and open-Linux statements below describe
+their original checkpoints. Provider and room-stack acceptance remain open.
+
 Approval record: following the successful isolated candidate and explicit
 amendment request, the maintainer replied "approval granted as requested".
 This acceptance was recorded before changing the canonical dependency lock.
