@@ -2,7 +2,8 @@
 
 Task 4 implements the approved [runtime design](../.ai/specs/how/codex-chat-agent.md)
 and [conversation integration profile](../.ai/specs/how/conversation-integration-profile.md).
-It does not provide a runnable worker server yet.
+This page covers the adapter library; the implemented server and durable receipt
+boundary are documented in the [worker runtime](runtime.md).
 
 `AppServer::spawn(Config)` checks the exact CLI version 0.160.0 and launches
 `codex app-server --listen stdio://` with an argument vector and cleared
@@ -20,7 +21,8 @@ reconciliation, provider-key injection and authenticated transport.
 
 The library accepts one execution per process. A successful outcome contains
 private thread/turn IDs and a schema-validated normalized InternalReply. The host
-closes it after acknowledgement. Error/timeout paths terminate the process group
+closes it after execution; broker acknowledgement is a separate durable worker
+boundary required before continuation. Error/timeout paths terminate the process group
 and await child reaping. Cancelling execution kills the group and schedules
 reaping even while the adapter is retained; a cancelled close can be awaited
 again. Dropping the adapter kills its group and aborts reader tasks.
@@ -58,8 +60,10 @@ python3 scripts/check_docs.py
 git diff --check
 ```
 
-Offline Cargo commands require cached dependencies. Verification used Rust
-1.93.1 on aarch64-apple-darwin. Rust 1.85 is the declared host minimum; the exact
-minimum toolchain has not been exercised. The inactive WASI wasip2 dependency
-requires Rust 1.87. See [dependency evidence](dependency-evidence.json) and
-[third-party notices](../THIRD_PARTY_NOTICES.md).
+Offline Cargo commands require cached dependencies. The corrected reviewed lock
+passed all 46 worker tests on actual Rust 1.85.0 and 1.93.1 on macOS ARM64 and
+native Linux AMD64/ARM64. The [approved compatibility correction](../.ai/specs/how/rust-185-lock-compatibility-proposal.md)
+preserves the declared 1.85 minimum. See [native acceptance](linux-acceptance.md),
+[dependency evidence](dependency-evidence.json) and [third-party notices](../THIRD_PARTY_NOTICES.md)
+for the exact lock, target scope and retained legal evidence. These tests do not
+establish a full room-stack or live-provider conversation.

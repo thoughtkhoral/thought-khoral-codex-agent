@@ -7,6 +7,11 @@ release or tag exists; packaged-stack and separately authorized live checks
 remain pending. This is not a production-readiness claim. This document derives
 from the local specifications and records the separate integration/release gates.
 
+The later approved [native Linux acceptance](../.ai/specs/how/linux-worker-acceptance.md)
+records successful AMD64/ARM64 runtime tests on Rust 1.85.0/1.93.1 and exact
+package-policy recaptures at the final lock. It closes worker portability gates;
+full Codex room-stack, rendered-browser, provider and production gates remain open.
+
 ## Responsibilities
 
 | Component | Responsibility |
@@ -23,7 +28,7 @@ explicit room thread, and submits one reserved turn at a time. Native thread IDs
 remain internal. Provider credentials and history belong to the independently
 operated agent, while ThoughtKhoral controls invocation and disclosed context.
 
-## Planned user experience
+## Approved conversation behavior and verification boundary
 
 Codex responds when a human directly addresses it by canonical mention or composer
 selection. It receives authorized room-wide discussion, including messages from
@@ -40,7 +45,7 @@ from the last bound runtime report, or unavailable when telemetry is missing.
 
 ## Bring your own agent
 
-The Codex implementation is released separately from the gateway. Other agents
+The Codex implementation is independently versioned from the gateway. Other agents
 may implement the shared profile and declare different optional capabilities.
 The initial integration admits one reviewed agent; arbitrary user-hosted URLs
 and self-service enrollment need their own trust and authorization design.
@@ -69,6 +74,8 @@ profile records worker-specific obligations. The provider-free agent/worker,
 gateway, broker, UI, and platform integration is pushed to each owning GitHub
 `main` for experimental POC use. No v1.1 contract release or tag exists.
 Packaged-stack activation and live-provider interoperability remain unverified.
+The implemented controls have provider-free synthetic evidence; the text above
+describes the approved behavior and does not assert live browser/provider acceptance.
 
 Source: approved [chat requirements](../.ai/specs/what/codex-chat-agent.md),
 [runtime design](../.ai/specs/how/codex-chat-agent.md), and

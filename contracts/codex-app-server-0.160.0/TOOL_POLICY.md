@@ -36,8 +36,11 @@ synthetic behavior, not native-host parity or provider access.
 The worker selects the embedded proof and installed proof path by its build
 target architecture. Both files are packaged, but another architecture's proof
 or executable digest is rejected. Unsupported build architectures are refused.
-Native x86_64 CI acceptance still requires a passing run of the unchanged
-mandatory package check.
+Subsequent [native Linux acceptance](../../.ai/specs/how/linux-worker-acceptance.md)
+passed the mandatory package check and exact recapture on AMD64 and ARM64 at
+the final reviewed lock. Four native runtime cells cover Rust 1.85.0/1.93.1;
+the two production-package builds use the pinned Rust 1.93.1 builder. The local
+emulated capture above remains separately attributed historical evidence.
 
 Run `python3 scripts/check_tool_policy.py` and
 `python3 scripts/check_contract_pins.py` from the repository root. Regenerate

@@ -1,14 +1,19 @@
 # Durable Codex worker
 
 Governing sources: approved [runtime design](../.ai/specs/how/codex-chat-agent.md)
-and [conversation profile](../.ai/specs/how/conversation-integration-profile.md).
+and [conversation profile](../.ai/specs/how/conversation-integration-profile.md),
+with the approved [architecture evidence](../.ai/specs/how/x86-package-evidence-proposal.md),
+[Rust compatibility correction](../.ai/specs/how/rust-185-lock-compatibility-proposal.md)
+and [native Linux acceptance](../.ai/specs/how/linux-worker-acceptance.md).
 Contribution: [issue 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/issues/1).
 
 Task 5 adds the independent worker, authenticated A2A v1 JSON-RPC service,
 worker-owned SQLite receipts and image. Tests use a synthetic subprocess and
-real temporary SQLite files. They do not call a provider. Deployment activation,
-live provider execution and deployment activation remain later gates. Task8 now
-verifies the initial tool policy for the reviewed Linuxaarch64 package.
+real temporary SQLite files. They do not call a provider. Full Codex room-stack
+activation and live provider execution remain later gates. Native Linux AMD64
+and ARM64 package checks now verify the initial tool policy against separate,
+exact target proofs. Current evidence and remaining gates are described below;
+the dated Task 6/8/9 image snapshots are historical evidence.
 
 ## Durable boundaries
 
@@ -105,20 +110,32 @@ cargo clippy --locked --all-targets -- -D warnings
 python3 scripts/check_contract_pins.py
 python3 scripts/check_dependency_notices.py
 python3 scripts/check_docs.py
+python3 scripts/check_tool_policy.py
+python3 scripts/test_tool_policy_resolver.py
+python3 scripts/test_linux_package.py
 git diff --check
 podman build -f Containerfile -t localhost/thought-khoral-codex-agent:task6-final .
 podman run --rm --network none --read-only localhost/thought-khoral-codex-agent:task6-final --verify-package
 ```
 
-The package check only prints the pinned CLI version and verifies UID/GID. CI runs
-fake protocol/SQLite checks and a network-disabled package check. It never supplies
-provider credentials or the activation flag. Dependency terms and upstream
-attributions are retained under `/usr/share/licenses/thought-khoral-codex-agent`.
-ARM64 was exercised locally; x86_64 packaging is covered by the CI definition and
-still requires its own successful run. Rust 1.93.1 was exercised; the declared
-1.85 minimum was not directly tested.
+`--verify-package` checks the exact CLI version and digest, UID/GID, restricted
+catalog, controls and architecture-selected proof bytes before printing both
+admission markers. It does not start the worker service or perform inference.
+Dependency terms and upstream attributions are retained under
+`/usr/share/licenses/thought-khoral-codex-agent`.
 
-The 2026-10-06 checkpoint records 39 passing provider-free tests and independent
+The [native acceptance workflow](linux-acceptance.md) passed all four Linux
+AMD64/ARM64 Rust 1.85.0/1.93.1 cells (46 tests each) and both unchanged-Containerfile
+package/capture jobs at `9bcdbde` and the final reviewed lock. Each package refused
+the other architecture's proof and changed catalog/controls, then recaptured the
+actual extracted CLI against an isolated loopback synthetic provider. Both target
+proofs matched committed bytes. No provider credentials or activation flag were
+supplied. [Retained evidence](evidence/linux-worker-acceptance-44599536091.json)
+includes source/lock, immutable images, exact proof hashes, artifact digests and
+zero-owned-container cleanup. The evidence-only `8d233e4` revision also passed
+all six native jobs.
+
+The historical 2026-10-06 checkpoint records 39 passing provider-free tests and independent
 review with no remaining blocking findings. [Image evidence](image-evidence.json)
 records the ARM64 local image identity and exact checked release/schema hashes.
 Overlapping builds exposed overly short fixture deadlines; worker fixtures now
@@ -134,19 +151,20 @@ paths; explicit controls disable tools, agents, extensions and remote discovery.
 Native model IDs/efforts still come from `model/list`. Exact admission and reviewed
 capture coverage apply before execution and to reported model changes.
 
-The actual CLI capture covered44 visible model/effort cases, a fresh-process
+Each target CLI capture covered 44 visible model/effort cases, a fresh-process
 resume, and six unsolicited function calls. Those calls returned native
 unknown/unsupported-tool outputs and did not run the canary. Package verification
 binds the installed CLI binary, catalog, controls and this evidence. Its new
-empty-tool marker is required by platform startup. Evidence covers Linuxaarch64;
-Linuxx86_64 fails closed pending a reviewed equivalent capture. No provider
-inference or account-access verification is implied.
+empty-tool marker is required by platform startup. Current native evidence covers
+Linux ARM64 and AMD64 with architecture-specific CLI/proof binding. Unsupported
+targets, stale/cross-target proofs and changed controls/catalog fail closed.
+No provider inference or account-access verification is implied.
 
 The [Task8 image evidence](task8-image-evidence.json) records the reviewed local
 image ID and runtime source commit; the earlier Task6 image record is retained
 as historical evidence and does not pass the new tool-policy gate.
 
-## Task 9 recovery package
+## Historical Task 9 recovery package
 
 The [Task9 image evidence](task9-image-evidence.json) binds the corrected receipt
 recovery runtime source to a newly built local immutable image. Its package
@@ -155,4 +173,6 @@ dropped; both admission markers passed. Default invocation still refuses
 activation. The installed native CLI, catalog and controls hashes match Task8.
 The unchanged native capture is reused with its original source and image
 attribution; it does not imply that the Task8 image contains the recovery fix.
-No provider call, service activation, publication, or x86_64 capture was performed.
+At that historical checkpoint no provider call, service activation, publication,
+or x86_64 capture was performed. The later native acceptance above supersedes its
+open portability gates without adding live-provider or full room-stack acceptance.

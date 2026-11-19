@@ -21,6 +21,12 @@ The [conversation profile v1.0.0](https://github.com/thoughtkhoral/thought-khora
 is published and verified. Consumer repositories record immutable pins. The
 published v1.0.0 artifact remains unchanged.
 
+As of 2026-11-19, [native Linux acceptance](docs/linux-acceptance.md) passed
+all four AMD64/ARM64 Rust 1.85.0/1.93.1 test cells and both actual package/policy
+captures at the reviewed final lock. Each compiler cell passed 46 tests; both
+target captures matched the committed proofs and cleaned all owned containers.
+This closes worker-native portability gates only, with exact retained evidence.
+
 The milestone-one goal is to let humans explicitly address Codex in a room and
 have it use authorized room-wide conversation history, with shared continue and
 fresh-session controls. The cross-project implementation, evidence limits, and
@@ -35,6 +41,7 @@ specifications, instructions, and curated memory.
 - [Cross-project Codex conversation status](https://github.com/thoughtkhoral/thought-khoral/blob/main/docs/codex-conversation-status.md) — ownership, evidence, and remaining milestone gates.
 - [Codex component status](docs/project-status.md) — this repository's worker implementation.
 - [Architecture](docs/architecture.md) — runtime boundaries and data flow.
+- [Native Linux acceptance](docs/linux-acceptance.md) — supported compiler/architecture matrix and retained package-policy evidence.
 - [Documentation workflow](docs/README.md) — specification-to-document traceability.
 - [Contributing](CONTRIBUTING.md) — issue-first contribution and verification.
 - [ThoughtKhoral repository map](https://github.com/thoughtkhoral/thought-khoral/blob/main/docs/repository-map.md).
