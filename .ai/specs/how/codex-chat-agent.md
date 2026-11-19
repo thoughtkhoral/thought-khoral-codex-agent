@@ -835,3 +835,66 @@ component commits are in the [coordinated plan](https://github.com/thoughtkhoral
 The v1.1 contract release/tag does not exist. Provider-free and synthetic
 verification passed as recorded above; packaged-stack and separately authorized
 live verification remain open. No production-readiness claim is made.
+
+## Architecture evidence amendment — 2026-11-19
+
+The maintainer approved the [bounded package amendment](x86-package-evidence-proposal.md)
+in this working session. The worker adds independently captured x86_64 proof,
+selects its embedded and installed evidence by build target architecture, and
+retains exact CLI/catalog/control/proof verification. Both evidence files are
+packaged; another architecture's evidence cannot satisfy the selected binding.
+Unsupported architectures are rejected at build time. The capture harness
+requires immutable CLI-source and Python-harness image IDs of the requested
+platform. The existing default ARM64 source-image pin is retained.
+
+The x86_64 proof was captured from the actual pinned binary under CPU emulation
+in an isolated Linux ARM64 VM: 44 model/effort cases, fresh-process resume, and
+six unsolicited-tool refusals, with no provider inference. This does not establish
+native x86_64 CI, packaged-stack, or live-provider acceptance. Those gates and
+the declared Rust 1.85 minimum remain independently verified requirements.
+
+The initial capture used image
+`sha256:343da50d46e7e77568a6fb99172c46f4f319a92acabe943e90e37b8dba7ea3ae`,
+built from retained worker image
+`sha256:2d8bfade27802f910cf68e832722c93b4a2acc2addb825711e1223617a4cd385`
+and Python/proxy harness image
+`sha256:5f7a8ad30098b2df613293631bf1695281b387868cefdafb5a82c3e1f3b4c326`,
+with its Codex executable replaced by the checksum-verified x86_64 release.
+The release archive SHA-256 is
+`306865417d4ee7a927785852910a527f41e1e159add390ac5ae3accb67d44a13`;
+the installed executable SHA-256 is
+`12eb3e81114588aca3b7998f4f19e8997b056aca08e57a7ca7c8a3ec8c652aad`.
+The unchanged `--inside` capture from source `fd1a34d82973deb8e73031f1f57750ad2607173a`
+ran under ARM64 Python, with only the x86_64 executable emulated. From the worker
+checkout, the equivalent isolated invocation is:
+
+```sh
+podman run --rm --network none --cap-drop ALL --read-only --tmpfs /tmp \
+  -v "$PWD:/proof:ro" -v /private/tmp/thought-khoral-resume-2026-11-19/x86-capture/result:/result \
+  --entrypoint python3 \
+  sha256:343da50d46e7e77568a6fb99172c46f4f319a92acabe943e90e37b8dba7ea3ae \
+  /proof/scripts/test-native-tool-policy.py --inside /result/tool-policy-proof-x86_64.json
+```
+
+The output proof SHA-256 is
+`db8557b9f852583002397827c28e8f76078f02d4aabbfad2aecfe6617ab20c58`.
+This initial mixed-architecture capture is separate from the new harness CLI,
+which requires both supplied images to match its explicit target platform.
+
+## Rust 1.85 lock correction — 2026-11-19
+
+The maintainer approved the [bounded compatibility correction](rust-185-lock-compatibility-proposal.md)
+after the actual minimum compiler rejected locked `yoke-derive 0.8.3`.
+The worker now pins `yoke-derive 0.8.2`, preserving `yoke 0.8.3` and adding
+the derive crate's required `synstructure 0.13.2` alongside the existing 0.14.0.
+Direct dependency requirements and the declared Rust 1.85 floor are unchanged.
+The exact approved lock SHA-256 is
+`1c70ff10992b000c93232155ca0032cab9b7a6c27a13ca4ac46eba862e864a34`.
+
+The dependency inventory covers all 276 registry packages and checksums in that
+lock, with 478 retained legal files. Replacement and added legal texts were
+extracted from checksum-verified crate archives. Final-source host verification
+is recorded in the amendment; Linux minimum-version and image verification
+remain separately attributed. Earlier Linux images were built from the prior
+lock. No service activation, protocol, tool policy, or provider access changes
+are included.
