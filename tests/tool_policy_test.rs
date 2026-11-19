@@ -63,15 +63,34 @@ fn package_evidence_binds_cli_catalog_controls_and_actual_capture() {
         env!("CARGO_MANIFEST_DIR"),
         "/contracts/codex-app-server-0.160.0"
     ));
-    let digest = "50b06603bdcdac39b714f5c3e68583c002b8ad8779ebfdaaf4932ff016b379c0";
+    let (digest, proof_name, other_proof) = match std::env::consts::ARCH {
+        "aarch64" => (
+            "50b06603bdcdac39b714f5c3e68583c002b8ad8779ebfdaaf4932ff016b379c0",
+            "tool-policy-proof-aarch64.json",
+            "tool-policy-proof-x86_64.json",
+        ),
+        "x86_64" => (
+            "12eb3e81114588aca3b7998f4f19e8997b056aca08e57a7ca7c8a3ec8c652aad",
+            "tool-policy-proof-x86_64.json",
+            "tool-policy-proof-aarch64.json",
+        ),
+        architecture => panic!("unsupported package architecture: {architecture}"),
+    };
     let catalog = base.join("restricted-models.json");
     let controls = base.join("tool-controls.json");
-    let proof = base.join("tool-policy-proof-aarch64.json");
+    let proof = base.join(proof_name);
     verify_evidence(&catalog, &controls, &proof, digest).unwrap();
     assert!(verify_evidence(&catalog, &controls, &proof, "wrong-cli-digest").is_err());
+    assert!(verify_evidence(&catalog, &controls, &base.join(other_proof), digest).is_err());
     let directory = tempfile::tempdir().unwrap();
     let tampered = directory.path().join("controls.json");
     std::fs::write(&tampered, "{}").unwrap();
     assert!(verify_evidence(&catalog, &tampered, &proof, digest).is_err());
     assert!(verify_evidence(&catalog, &controls, &tampered, digest).is_err());
+    let tampered_catalog = directory.path().join("catalog.json");
+    std::fs::copy(&catalog, &tampered_catalog).unwrap();
+    let mut bytes = std::fs::read(&tampered_catalog).unwrap();
+    bytes.push(b' ');
+    std::fs::write(&tampered_catalog, bytes).unwrap();
+    assert!(verify_evidence(&tampered_catalog, &controls, &proof, digest).is_err());
 }

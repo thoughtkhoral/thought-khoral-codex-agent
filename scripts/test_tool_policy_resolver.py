@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import importlib.util,pathlib,unittest
+import argparse,importlib.util,pathlib,unittest
 path=pathlib.Path(__file__).with_name('test-native-tool-policy.py')
 spec=importlib.util.spec_from_file_location('capture',path);capture=importlib.util.module_from_spec(spec);spec.loader.exec_module(capture)
 class Resolver(unittest.TestCase):
@@ -11,4 +11,11 @@ class Resolver(unittest.TestCase):
   self.assertTrue(hasattr(capture,'wire_effort'),'pinned wire resolver missing')
   self.assertEqual(capture.wire_effort({},'high'),'high')
   self.assertEqual(capture.wire_effort({},'persistent'),'disabled')
+class ImmutableImages(unittest.TestCase):
+ def test_capture_requires_immutable_image_ids(self):
+  self.assertTrue(hasattr(capture,'image_id'),'capture image overrides must reject mutable tags')
+  pinned='sha256:'+'a'*64
+  self.assertEqual(capture.image_id(pinned),pinned)
+  for value in ['localhost/worker:latest','worker@sha256:'+'a'*64,'sha256:abc','sha256:'+'z'*64]:
+   with self.subTest(value=value),self.assertRaises(argparse.ArgumentTypeError):capture.image_id(value)
 if __name__=='__main__':unittest.main()

@@ -5,7 +5,7 @@
 Default runs inside a dedicated Task8 container with --network none. Never points
 production worker configuration at the capture provider. --inside is container-only.
 """
-import hashlib,http.server,json,os,pathlib,queue,subprocess,sys,tempfile,threading,time
+import argparse,hashlib,http.server,json,os,pathlib,queue,re,subprocess,sys,tempfile,threading,time
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 ASSETS=ROOT/'contracts/codex-app-server-0.160.0'
 
@@ -162,18 +162,36 @@ def inside(output):
    pathlib.Path(output).write_text(json.dumps(proof,sort_keys=True,indent=2)+'\n')
   finally:native.close();server.shutdown()
 
-def container(output):
+DEFAULT_SOURCE='sha256:95145520f4249ac1e843c0f13a817e0c42cfc578735abef5fa7b760333596a1b'
+DEFAULT_HARNESS='sha256:5f7a8ad30098b2df613293631bf1695281b387868cefdafb5a82c3e1f3b4c326'
+
+def image_id(value):
+ if not re.fullmatch(r'sha256:[0-9a-f]{64}',value):raise argparse.ArgumentTypeError('capture requires an immutable sha256 image ID')
+ return value
+
+def container(output,source_image=DEFAULT_SOURCE,harness_image=DEFAULT_HARNESS,platform='linux/arm64'):
  prefix=f'task8-tool-proof-{os.getpid()}'
- actual=subprocess.check_output(['podman','image','inspect','--format','{{.Id}}','localhost/thought-khoral-codex-agent:task6-final'],text=True).strip().removeprefix('sha256:')
- assert actual=='95145520f4249ac1e843c0f13a817e0c42cfc578735abef5fa7b760333596a1b','capture CLI source image drift'
+ for reference in [source_image,harness_image]:
+  image_id(reference)
+  actual,architecture=subprocess.check_output(['podman','image','inspect','--format','{{.Id}} {{.Architecture}}',reference],text=True).split()
+  assert actual.removeprefix('sha256:')==reference.removeprefix('sha256:'),'capture source image drift'
+  assert platform=='linux/'+architecture,'capture image platform differs from requested target'
+ print('capture target',platform,'CLI source',source_image,'harness',harness_image,flush=True)
  with tempfile.TemporaryDirectory(prefix='task8-tools-') as tmp:
-  tmp=pathlib.Path(tmp);tmp.chmod(0o777);(tmp/'Containerfile').write_text('FROM localhost/thought-khoral-codex-agent:task6-final AS cli\nFROM localhost/thought-khoral-codex-proxy:task8-fixture\nCOPY --from=cli /usr/local/bin/codex /usr/local/bin/codex\nUSER 10003:10003\n')
-  subprocess.run(['podman','build','--quiet','-t','localhost/'+prefix,'-f',str(tmp/'Containerfile'),str(tmp)],check=True)
+  tmp=pathlib.Path(tmp);tmp.chmod(0o777);(tmp/'Containerfile').write_text(f'FROM {source_image} AS cli\nFROM {harness_image}\nCOPY --from=cli /usr/local/bin/codex /usr/local/bin/codex\nUSER 10003:10003\n')
+  subprocess.run(['podman','build','--platform',platform,'--quiet','-t','localhost/'+prefix,'-f',str(tmp/'Containerfile'),str(tmp)],check=True)
   try:
-   subprocess.run(['podman','run','--rm','--name',prefix,'--network','none','--cap-drop','ALL','--read-only','--tmpfs','/tmp','-v',str(ROOT)+':/proof:ro','-v',str(tmp)+':/result','--entrypoint','python3','localhost/'+prefix,'/proof/scripts/test-native-tool-policy.py','--inside','/result/proof.json'],check=True)
+   subprocess.run(['podman','run','--platform',platform,'--rm','--name',prefix,'--network','none','--cap-drop','ALL','--read-only','--tmpfs','/tmp','-v',str(ROOT)+':/proof:ro','-v',str(tmp)+':/result','--entrypoint','python3','localhost/'+prefix,'/proof/scripts/test-native-tool-policy.py','--inside','/result/proof.json'],check=True)
    pathlib.Path(output).write_bytes((tmp/'proof.json').read_bytes())
   finally:subprocess.run(['podman','rm','-f',prefix],capture_output=True)
 
 if __name__=='__main__':
  if len(sys.argv)==3 and sys.argv[1]=='--inside':inside(sys.argv[2])
- else:container(sys.argv[1] if len(sys.argv)>1 else '/tmp/task8-tool-proof.json')
+ else:
+  parser=argparse.ArgumentParser(description=__doc__)
+  parser.add_argument('output',nargs='?',default='/tmp/task8-tool-proof.json')
+  parser.add_argument('--source-image',type=image_id,default=DEFAULT_SOURCE)
+  parser.add_argument('--harness-image',type=image_id,default=DEFAULT_HARNESS)
+  parser.add_argument('--platform',choices=['linux/arm64','linux/amd64'],default='linux/arm64')
+  args=parser.parse_args()
+  container(args.output,args.source_image,args.harness_image,args.platform)

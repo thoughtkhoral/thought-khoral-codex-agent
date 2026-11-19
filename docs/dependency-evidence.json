@@ -1,9 +1,9 @@
 {
-  "date": "2026-10-06",
-  "cargoLockSha256": "2526219da87851a9004af98297ddff4ee0c3ddcdd8e9c45f003619639ee35416",
+  "date": "2026-11-19",
+  "cargoLockSha256": "1c70ff10992b000c93232155ca0032cab9b7a6c27a13ca4ac46eba862e864a34",
   "review": "All locked crates: preserve packaged upstream legal files, or repository-root legal files at their packaged VCS commit. Permissive alternatives selected where available; AND obligations retained. Runtime image also retains native Codex LICENSE/NOTICE and Ratatui MIT terms.",
-  "verifiedToolchain": "rustc/cargo 1.93.1, aarch64-apple-darwin; image rust 1.93, aarch64 Linux",
-  "minimumRust": "1.85 declared; exact minimum not exercised. Inactive WASI dependencies can require newer Rust.",
+  "verifiedToolchain": "rustc/cargo 1.85.0 and 1.93.1, aarch64-apple-darwin: final locked source, 46 tests passed on each. Earlier Linux images use the previous dependency lock.",
+  "minimumRust": "1.85 verified on aarch64-apple-darwin; Linux minimum-version execution remains open. Inactive WASI dependencies can require newer Rust.",
   "packages": [
     {
       "name": "a2a-lf",
@@ -2928,6 +2928,20 @@
     },
     {
       "name": "synstructure",
+      "version": "0.13.2",
+      "declaredLicense": "MIT",
+      "selectedLicense": "MIT",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2",
+      "repository": "https://github.com/mystor/synstructure",
+      "rustVersion": null,
+      "legalOrigin": "packaged crate",
+      "upstreamLegalFileHashes": {
+        "LICENSE": "219920e865eee70b7dcfc948a86b099e7f4fe2de01bcca2ca9a20c0a033f2b59"
+      }
+    },
+    {
+      "name": "synstructure",
       "version": "0.14.0",
       "declaredLicense": "MIT",
       "selectedLicense": "MIT",
@@ -3914,11 +3928,11 @@
     },
     {
       "name": "yoke-derive",
-      "version": "0.8.3",
+      "version": "0.8.2",
       "declaredLicense": "Unicode-3.0",
       "selectedLicense": "Unicode-3.0",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
-      "checksum": "33811428bee40dbceb6d545e95754741d17a6aef9a4849f0fd62e2ba4f412a78",
+      "checksum": "de844c262c8848816172cef550288e7dc6c7b7814b4ee56b3e1553f275f1858e",
       "repository": "https://github.com/unicode-org/icu4x",
       "rustVersion": null,
       "legalOrigin": "packaged crate",

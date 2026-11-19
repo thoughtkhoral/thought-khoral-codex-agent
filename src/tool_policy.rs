@@ -49,10 +49,19 @@ pub fn validate_selection(model: &str, effort: Option<&str>) -> Result<(), Runti
     Ok(())
 }
 
+#[cfg(target_arch = "aarch64")]
 const PROOF: &str =
     include_str!("../contracts/codex-app-server-0.160.0/tool-policy-proof-aarch64.json");
+#[cfg(target_arch = "x86_64")]
+const PROOF: &str =
+    include_str!("../contracts/codex-app-server-0.160.0/tool-policy-proof-x86_64.json");
+#[cfg(not(any(target_arch = "aarch64", target_arch = "x86_64")))]
+compile_error!("worker package requires reviewed aarch64 or x86_64 tool-policy evidence");
 pub const CONTROLS_PATH: &str = "/opt/thought-khoral-codex/tool-controls.json";
+#[cfg(target_arch = "aarch64")]
 pub const PROOF_PATH: &str = "/opt/thought-khoral-codex/tool-policy-proof-aarch64.json";
+#[cfg(target_arch = "x86_64")]
+pub const PROOF_PATH: &str = "/opt/thought-khoral-codex/tool-policy-proof-x86_64.json";
 
 pub fn verify_evidence(
     catalog: &Path,

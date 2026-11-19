@@ -24,13 +24,40 @@ explains why a native Ultra setting has a different wire reasoning effort.
 loopback synthetic HTTP/SSE server in a network-disabled container. Nested tool
 arrays were empty; model and native effort were preserved; wire effort follows
 the pinned resolver. It is not provider access or inference evidence. Only this
-CLI binary digest is admitted by the current package verifier; x86_64 fails closed.
+CLI binary digest was admitted by the original package verifier.
+
+The approved [architecture evidence amendment](../../.ai/specs/how/x86-package-evidence-proposal.md)
+adds `tool-policy-proof-x86_64.json`, captured from the checksum-verified Linux
+x86_64 release executable. All 44 cases, resume behavior, and six unsolicited
+tool refusals match ARM64; only `cliSha256` differs. The x86_64 capture ran under
+CPU emulation in the local Linux ARM64 VM. It establishes actual-binary
+synthetic behavior, not native-host parity or provider access.
+
+The worker selects the embedded proof and installed proof path by its build
+target architecture. Both files are packaged, but another architecture's proof
+or executable digest is rejected. Unsupported build architectures are refused.
+Native x86_64 CI acceptance still requires a passing run of the unchanged
+mandatory package check.
 
 Run `python3 scripts/check_tool_policy.py` and
 `python3 scripts/check_contract_pins.py` from the repository root. Regenerate
 actual evidence with `python3 scripts/test-native-tool-policy.py OUTPUT.json` in
 the approved isolated test environment. Its source CLI image must resolve to the
 recorded Task6 image ID before it can start; it uses no real provider key.
+The default harness image is also pinned to its immutable reviewed ARM64 ID.
+For another target, supply immutable IDs for a worker containing the pinned CLI
+and a Python 3 harness image of the same platform:
+
+```sh
+python3 scripts/test-native-tool-policy.py /tmp/x86-tool-proof.json \
+  --platform linux/amd64 --source-image sha256:<worker-image-id> \
+  --harness-image sha256:<python-harness-image-id>
+```
+
+Mutable image references and platform mismatches fail before capture. Both
+targets run without container networking, with read-only filesystems, dropped
+capabilities, and only a loopback synthetic provider. Record image IDs and
+whether CPU emulation was used beside the output proof.
 
 The actual native harness also injected six unsolicited function calls: apply_patch,
 exec_command, shell, exec, client_tool and an MCP canary. Each produced a native
