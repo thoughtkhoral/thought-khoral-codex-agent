@@ -34,6 +34,14 @@ guide](../../docs/project-status.md).
 - [How: repository foundation and documentation checks](how/repository-foundation.md)
 - [Decision 001: governance, identity, and license](decisions/001-governance-and-license.md)
 
+## Approved Linux acceptance extension
+
+The [native Linux acceptance How](how/linux-worker-acceptance.md) was approved
+by the maintainer on 2026-11-19 for local CI/helper implementation and offline
+verification. It defines native AMD64/ARM64 Rust 1.85.0/1.93.1 tests, final-lock
+image admission and isolated actual-CLI recapture. Publishing source, executing
+published CI and activating local services remain separate gates.
+
 ## Approved milestone-one runtime
 
 - [Rust 1.85 dependency-lock compatibility](how/rust-185-lock-compatibility-proposal.md)

@@ -898,3 +898,11 @@ is recorded in the amendment; Linux minimum-version and image verification
 remain separately attributed. Earlier Linux images were built from the prior
 lock. No service activation, protocol, tool policy, or provider access changes
 are included.
+
+## Approved native Linux acceptance — 2026-11-19
+
+The maintainer approved the [focused Linux acceptance How](linux-worker-acceptance.md)
+before CI/helper implementation. It extends existing build/portability verification,
+preserves the product What and runtime boundaries, and keeps all native acceptance
+claims open until real jobs pass. Local implementation and offline verification
+are authorized; publishing and local service activation remain separate.
