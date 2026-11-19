@@ -137,14 +137,14 @@ remain stopped during implementation and offline validation.
   emulation, cross-build or platform fallback.
 - [ ] Both actual production-package builds, admission/tamper probes and exact
   native CLI recaptures pass at that revision and lock digest.
-- [ ] Offline tests prove refusal for wrong host/engine/image architecture,
+- [x] Offline tests prove refusal for wrong host/engine/image architecture,
   dirty/mismatched source, stale lock, failed verifier, wrong CLI, changed/partial
   proof and cleanup failure. Assert real validation/outcomes, not only mock calls.
-- [ ] Missing/failing steps cannot create a passed manifest; failure tests retain
+- [x] Missing/failing steps cannot create a passed manifest; failure tests retain
   bounded partial evidence and clean only their own resources.
-- [ ] Existing worker suites, fmt/clippy, pins/legal/docs and root hierarchy,
+- [x] Existing worker suites, fmt/clippy, pins/legal/docs and root hierarchy,
   reference/identity checks pass after implementation.
-- [ ] Local no-engine tests are labelled as such. Native acceptance is recorded
+- [x] Local no-engine tests are labelled as such. Native acceptance is recorded
   only after actual Linux jobs pass, without closing live-provider, rendered-
   browser, full Codex packaged-stack or production gates by implication.
 
@@ -158,6 +158,41 @@ Commit specifications before implementation with descriptive issue/spec comments
 Pushing, dispatching published CI, provider activation and release remain
 separate actions. The prior six local maintenance commits are still unpushed.
 This approval grants no local container activation.
+
+## Local implementation checkpoint — 2026-11-19
+
+The approved workflow/helper, reviewed test-only pins, offline tests and derived
+Linux acceptance guide are implemented locally. The specification approval was
+committed first as `5fd884e`; implementation has not been pushed or executed on
+published Linux runners. Both native acceptance checkboxes above remain open.
+
+Verification at the unchanged lock digest recorded above:
+
+- `python3 scripts/test_linux_package.py`: 15 tests pass using a Docker boundary
+  double; no engine or container is used. These include both architecture paths,
+  source/lock refusal, runtime-version/native-target refusal, incomplete proofs,
+  partial allocation, cleanup failure/retry and stale passed-manifest revocation.
+- Review identified that any nonzero tamper exit could mask an infrastructure
+  failure. Regression tests first reproduced 24 failed subcases. The helper now
+  inspects completed, started, non-OOM container state and requires the actual
+  worker's exact policy result: exit 1 and `runtime_unavailable`. Launch failures,
+  kills and unrelated diagnostics at each of the three probes fail acceptance.
+  Final independent static review reported no remaining material finding.
+- All 46 Rust tests pass on both 1.85.0 and 1.93.1 on **macOS ARM64**. The first
+  1.85 run hit a sandbox permission denial in a descendant-process cleanup test;
+  the authorized rerun outside that restriction passed the full suite. This is
+  host evidence, not native Linux or Docker evidence.
+- Rust 1.93.1 fmt/clippy with denied warnings, 144 contract pins, 478 retained
+  legal files for 276 crates, catalog/tool policy, three existing capture-helper
+  tests, 120 local documentation links and whitespace checks pass.
+- Upstream-checksum-verified actionlint 1.7.12 accepts the workflow. Root spec
+  hierarchy, repository references and identity checks pass. No running Podman
+  containers were present; local stacks stayed stopped throughout.
+
+Next acceptance requires authorized publication followed by the four actual
+native runtime cells and both final-lock package/capture jobs, with reviewed run
+URLs and retained artifact digests. Local tests and review do not close those
+gates or any Task 9, browser, provider, release or production gate.
 
 ## Primary references checked on 2026-11-19
 

@@ -11,6 +11,7 @@ not generate them or rewrite their sources.
 | [Codex worker component status](project-status.md) | [Chat requirements](../.ai/specs/what/codex-chat-agent.md), [runtime design](../.ai/specs/how/codex-chat-agent.md), and [coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md) |
 | [Architecture](architecture.md) | Approved [runtime design](../.ai/specs/how/codex-chat-agent.md) |
 | [Worker runtime](runtime.md) | Approved [runtime design](../.ai/specs/how/codex-chat-agent.md) |
+| [Native Linux acceptance](linux-acceptance.md) | Approved [Linux acceptance How](../.ai/specs/how/linux-worker-acceptance.md) |
 | [Adapter library](adapter.md) | Approved [runtime design](../.ai/specs/how/codex-chat-agent.md) |
 | [Third-party sources](../THIRD_PARTY_NOTICES.md) | Approved [runtime design](../.ai/specs/how/codex-chat-agent.md) |
 | Shared conversation profile | Approved [integration profile](../.ai/specs/how/conversation-integration-profile.md), owned by contracts before publication |

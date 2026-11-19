@@ -1,0 +1,7 @@
+{
+  "pythonIndex": "docker.io/library/python@sha256:a83ba18aef0f865b1a4a611c2cf460fe446f2795673bbb9fe43be570439e3b39",
+  "pythonManifests": {
+    "amd64": "sha256:e8c69d86735f6df3efa06b324694fe51f0422785f83a3bd463052636c2421944",
+    "arm64": "sha256:464bee9ac10a34b0c86031f12d94d7ccc4643725773b23eff4076305fafab420"
+  }
+}

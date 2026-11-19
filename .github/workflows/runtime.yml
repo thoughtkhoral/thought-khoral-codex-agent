@@ -5,18 +5,99 @@ permissions:
   contents: read
 jobs:
   runtime:
-    runs-on: ubuntu-latest
+    name: Native ${{ matrix.arch }} Rust ${{ matrix.rust }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        rust: ['1.85.0', '1.93.1']
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+        # Each architecture must be paired with BOTH Rust versions.
+        arch: [amd64, arm64]
+    env:
+      EVIDENCE_NAME: linux-runtime-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.arch }}-${{ matrix.rust }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.93.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@df2a88e9fe4098bad09cb42c3dec7187f15861fc # master-history
+        with:
+          toolchain: ${{ matrix.rust }}
           components: rustfmt, clippy
-      - run: cargo test --locked
-      - run: cargo fmt --check
-      - run: cargo clippy --locked --all-targets -- -D warnings
-      - run: python3 scripts/check_contract_pins.py
-      - run: python3 scripts/check_dependency_notices.py
-      - run: python3 scripts/check_docs.py
-      - run: git diff --check
-      - run: docker build -f Containerfile -t codex-worker-test .
-      - run: docker run --rm --network none --read-only codex-worker-test --verify-package
+      - name: Native compiler and locked runtime tests
+        env:
+          EVENT_SHA: ${{ github.sha }}
+          TARGET_ARCH: ${{ matrix.arch }}
+          RUST_VERSION: ${{ matrix.rust }}
+        run: python3 scripts/verify-linux-package.py runtime --arch "$TARGET_ARCH" --toolchain "$RUST_VERSION" --commit "$EVENT_SHA" --output "$RUNNER_TEMP/$EVIDENCE_NAME"
+      - name: Existing quality gates and offline orchestration tests
+        if: matrix.arch == 'amd64' && matrix.rust == '1.93.1'
+        run: |
+          cargo fmt --check
+          cargo clippy --locked --all-targets -- -D warnings
+          python3 scripts/check_contract_pins.py
+          python3 scripts/check_dependency_notices.py
+          python3 scripts/check_docs.py
+          python3 scripts/check_tool_policy.py
+          python3 scripts/test_tool_policy_resolver.py
+          python3 scripts/test_linux_package.py
+          git diff --check
+      - name: Upload bounded runtime evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: linux-runtime-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.arch }}-${{ matrix.rust }}
+          path: |
+            ${{ runner.temp }}/${{ env.EVIDENCE_NAME }}/manifest.json
+            ${{ runner.temp }}/${{ env.EVIDENCE_NAME }}/verification.txt
+          if-no-files-found: error
+          retention-days: 14
+          include-hidden-files: false
+          overwrite: false
+  package:
+    name: Native ${{ matrix.arch }} package and CLI capture
+    needs: runtime
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    env:
+      EVIDENCE_NAME: linux-package-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Build and verify actual package and native CLI
+        env:
+          EVENT_SHA: ${{ github.sha }}
+          TARGET_ARCH: ${{ matrix.arch }}
+        run: python3 scripts/verify-linux-package.py package --arch "$TARGET_ARCH" --commit "$EVENT_SHA" --output "$RUNNER_TEMP/$EVIDENCE_NAME"
+      - name: Always retry owned-resource cleanup
+        if: always()
+        run: python3 scripts/verify-linux-package.py cleanup --output "$RUNNER_TEMP/$EVIDENCE_NAME"
+      - name: Upload bounded package evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: linux-package-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.arch }}-builder-1.93.1
+          path: |
+            ${{ runner.temp }}/${{ env.EVIDENCE_NAME }}/manifest.json
+            ${{ runner.temp }}/${{ env.EVIDENCE_NAME }}/proof.json
+            ${{ runner.temp }}/${{ env.EVIDENCE_NAME }}/cleanup.json
+          if-no-files-found: error
+          retention-days: 14
+          include-hidden-files: false
+          overwrite: false
