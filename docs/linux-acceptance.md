@@ -2,6 +2,13 @@
 
 Governing specification: [approved Linux acceptance How](../.ai/specs/how/linux-worker-acceptance.md).
 
+Verified checkpoint: all six native jobs passed at `9bcdbde` in
+[run 44599536091](https://github.com/thoughtkhoral/thought-khoral-codex-agent/actions/runs/44599536091).
+The [retained evidence](evidence/linux-worker-acceptance-44599536091.json) records
+the exact source/lock, platforms/toolchains, image/proof hashes, artifact digests
+and cleanup. This establishes native worker/package/policy evidence for that
+revision; room-stack, browser, provider, release and production gates remain open.
+
 The runtime workflow has four required native cells: Rust 1.85.0 and 1.93.1 on
 AMD64 (`ubuntu-24.04`) and ARM64 (`ubuntu-24.04-arm`). Each records the actual
 compiler, Cargo, native target, checked-out commit and reviewed lock hash before

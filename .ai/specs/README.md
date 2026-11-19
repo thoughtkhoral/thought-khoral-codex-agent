@@ -39,8 +39,10 @@ guide](../../docs/project-status.md).
 The [native Linux acceptance How](how/linux-worker-acceptance.md) was approved
 by the maintainer on 2026-11-19 for local CI/helper implementation and offline
 verification. It defines native AMD64/ARM64 Rust 1.85.0/1.93.1 tests, final-lock
-image admission and isolated actual-CLI recapture. Publishing source, executing
-published CI and activating local services remain separate gates.
+image admission and isolated actual-CLI recapture. The maintainer subsequently
+authorized publication and CI execution: all six native jobs passed at `9bcdbde`.
+The How retains exact run/artifact evidence and scope. Local activation and
+packaged-stack/browser/live acceptance remain separate gates.
 
 ## Approved milestone-one runtime
 

@@ -904,5 +904,7 @@ are included.
 The maintainer approved the [focused Linux acceptance How](linux-worker-acceptance.md)
 before CI/helper implementation. It extends existing build/portability verification,
 preserves the product What and runtime boundaries, and keeps all native acceptance
-claims open until real jobs pass. Local implementation and offline verification
-are authorized; publishing and local service activation remain separate.
+claims open until real jobs pass. Publication and CI were subsequently authorized;
+all six native Linux jobs passed at `9bcdbde`, with reviewed source/lock, exact
+CLI proof and cleanup evidence retained in that How. Local service activation,
+Task 9, browser/live and release acceptance remain separate.

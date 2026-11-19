@@ -3,7 +3,9 @@
 Status: approved by the maintainer on 2026-11-19 with “approved” after review of
 this concrete How. Local workflow/helper implementation, offline verification,
 independent review and specification-first commits are authorized. Actual native
-Linux acceptance awaits published jobs; local containers remain stopped.
+Linux acceptance is recorded below at the exact tested revision; local containers
+remain stopped. The maintainer subsequently authorized publication and CI execution
+with “proceed”.
 
 ## Authority and baseline
 
@@ -133,9 +135,9 @@ remain stopped during implementation and offline validation.
 
 ## Acceptance criteria
 
-- [ ] Four native Linux/toolchain cells pass on the same source/lock, without
+- [x] Four native Linux/toolchain cells pass on the same source/lock, without
   emulation, cross-build or platform fallback.
-- [ ] Both actual production-package builds, admission/tamper probes and exact
+- [x] Both actual production-package builds, admission/tamper probes and exact
   native CLI recaptures pass at that revision and lock digest.
 - [x] Offline tests prove refusal for wrong host/engine/image architecture,
   dirty/mismatched source, stale lock, failed verifier, wrong CLI, changed/partial
@@ -193,6 +195,36 @@ Next acceptance requires authorized publication followed by the four actual
 native runtime cells and both final-lock package/capture jobs, with reviewed run
 URLs and retained artifact digests. Local tests and review do not close those
 gates or any Task 9, browser, provider, release or production gate.
+
+## Published native acceptance — 2026-11-19
+
+The maintainer authorized source publication and CI execution with “proceed”.
+Worker `9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18`, root `0f5ff63` and platform
+`74ac640` were pushed after their specification-first commits. All six jobs in
+[run 44599536091, attempt 1](https://github.com/thoughtkhoral/thought-khoral-codex-agent/actions/runs/44599536091)
+passed. The independent documentation run also passed.
+
+All four native runtime cells passed 46 tests each on Rust 1.85.0/1.93.1 for
+AMD64 and ARM64. Downloaded manifests and test summaries confirm native Linux,
+actual toolchains, clean source at that exact commit and the final lock digest.
+Both package jobs built the unchanged production Containerfile at that same
+revision, passed admission and tamper refusal, extracted the exact pinned CLI
+and reproduced the committed target proofs byte for byte (44 cases/eight models,
+resume and six unsolicited-tool refusals each). Cleanup reports zero owned
+containers remaining. No local test containers or provider inference were used.
+
+The [retained native evidence](../../../docs/evidence/linux-worker-acceptance-44599536091.json)
+contains all six reviewed manifests, run/job URLs, GitHub artifact IDs/archive
+digests/expiry, manifest hashes, runtime summary hashes/counts, immutable image
+IDs, exact proof hashes and cleanup results. Artifact archive digests are sourced
+from GitHub's artifact API; downloaded manifests/proofs were checked independently
+against the committed inputs. Expiring uploads are supplemented by these durable
+records and the separately committed proof files.
+
+This closes this How's native runtime/package/policy evidence gates for the
+tested revision and lock only. Task 9 packaged room-stack, rendered-browser,
+live-provider, contract publication, image publication and production/release
+acceptance remain separate. The preceding local checkpoint is historical.
 
 ## Primary references checked on 2026-11-19
 

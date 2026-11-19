@@ -1,0 +1,334 @@
+{
+  "artifactDigestSource": "GitHub Actions artifact API archive digest; downloaded manifest/proof contents independently checked against committed source.",
+  "attempt": 1,
+  "evidence": [
+    {
+      "artifact": {
+        "created_at": "2026-11-19T19:35:02Z",
+        "digest": "sha256:396fe3e959ebe5225b55eaeed6421aba5a377cce7c30346bbb8c844fcdc57e72",
+        "expires_at": "2026-12-03T19:35:02Z",
+        "id": 14567746794,
+        "name": "linux-runtime-9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18-44599536091-1-amd64-1.85.0",
+        "size_in_bytes": 4724
+      },
+      "manifest": {
+        "kind": "native-runtime",
+        "native": {
+          "machine": "x86_64",
+          "platform": "linux/amd64",
+          "runnerArch": "X64",
+          "system": "Linux"
+        },
+        "source": {
+          "cargoLockSha256": "1c70ff10992b000c93232155ca0032cab9b7a6c27a13ca4ac46eba862e864a34",
+          "clean": true,
+          "commit": "9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18",
+          "containerfileSha256": "c0b85b1547d5ce683531ef1602b98d2a08056464eb74ead0f9037e13aa136d92"
+        },
+        "status": "passed",
+        "toolchain": {
+          "cargo": "cargo 1.85.0 (d73d2caf9 2024-12-31)",
+          "requested": "1.85.0",
+          "rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7"
+        }
+      },
+      "manifestSha256": "5fb583e92a0658d4f484068836e8220257776bfb9c199efe3abed33c319eaff2",
+      "testsPassed": 46,
+      "verificationSummarySha256": "4a792c49439b8735924638c4cc13006c94418dc80060788a62ae8e8be08aef29"
+    },
+    {
+      "artifact": {
+        "created_at": "2026-11-19T19:35:12Z",
+        "digest": "sha256:5236f29745197ddf8a4f280b404366c3f517c61fe89559c4d476eef8de5a801e",
+        "expires_at": "2026-12-03T19:35:10Z",
+        "id": 14568195034,
+        "name": "linux-runtime-9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18-44599536091-1-amd64-1.93.1",
+        "size_in_bytes": 4734
+      },
+      "manifest": {
+        "kind": "native-runtime",
+        "native": {
+          "machine": "x86_64",
+          "platform": "linux/amd64",
+          "runnerArch": "X64",
+          "system": "Linux"
+        },
+        "source": {
+          "cargoLockSha256": "1c70ff10992b000c93232155ca0032cab9b7a6c27a13ca4ac46eba862e864a34",
+          "clean": true,
+          "commit": "9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18",
+          "containerfileSha256": "c0b85b1547d5ce683531ef1602b98d2a08056464eb74ead0f9037e13aa136d92"
+        },
+        "status": "passed",
+        "toolchain": {
+          "cargo": "cargo 1.93.1 (083ac5135 2025-12-15)",
+          "requested": "1.93.1",
+          "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11)\nbinary: rustc\ncommit-hash: 01f6ddf7588f42ae2d7eb0a2f21d44e8e96674cf\ncommit-date: 2026-02-11\nhost: x86_64-unknown-linux-gnu\nrelease: 1.93.1\nLLVM version: 21.1.8"
+        }
+      },
+      "manifestSha256": "3acbd73ebd80b2035596e1cffc4a8429e72dc8d4423a2f024631a8a48bfe422b",
+      "testsPassed": 46,
+      "verificationSummarySha256": "2182eda5d9e7056be305ac33eb123724fa3862c59f026644f36c07713cf6b5f7"
+    },
+    {
+      "artifact": {
+        "created_at": "2026-11-19T19:35:15Z",
+        "digest": "sha256:5c622ed5b87049bafc3a0dddeaa570a66e5d182bb151674d6bff1348dcd1f147",
+        "expires_at": "2026-12-03T19:35:14Z",
+        "id": 14566843234,
+        "name": "linux-runtime-9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18-44599536091-1-arm64-1.85.0",
+        "size_in_bytes": 4728
+      },
+      "manifest": {
+        "kind": "native-runtime",
+        "native": {
+          "machine": "aarch64",
+          "platform": "linux/arm64",
+          "runnerArch": "ARM64",
+          "system": "Linux"
+        },
+        "source": {
+          "cargoLockSha256": "1c70ff10992b000c93232155ca0032cab9b7a6c27a13ca4ac46eba862e864a34",
+          "clean": true,
+          "commit": "9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18",
+          "containerfileSha256": "c0b85b1547d5ce683531ef1602b98d2a08056464eb74ead0f9037e13aa136d92"
+        },
+        "status": "passed",
+        "toolchain": {
+          "cargo": "cargo 1.85.0 (d73d2caf9 2024-12-31)",
+          "requested": "1.85.0",
+          "rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: aarch64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7"
+        }
+      },
+      "manifestSha256": "db3ada9a1ed7a646c736d024ac5b9d9285adf8a9ca075c0123ac4a2bf4f17c55",
+      "testsPassed": 46,
+      "verificationSummarySha256": "5cf01aa77276316ae963e39132041b406f64ac0995274ec73c50aefb59077e8b"
+    },
+    {
+      "artifact": {
+        "created_at": "2026-11-19T19:34:53Z",
+        "digest": "sha256:3b3cc974b8688cfdfecd6b008457a89a94f8ce328da29eae11219505bdcbe166",
+        "expires_at": "2026-12-03T19:34:53Z",
+        "id": 14566683116,
+        "name": "linux-runtime-9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18-44599536091-1-arm64-1.93.1",
+        "size_in_bytes": 4738
+      },
+      "manifest": {
+        "kind": "native-runtime",
+        "native": {
+          "machine": "aarch64",
+          "platform": "linux/arm64",
+          "runnerArch": "ARM64",
+          "system": "Linux"
+        },
+        "source": {
+          "cargoLockSha256": "1c70ff10992b000c93232155ca0032cab9b7a6c27a13ca4ac46eba862e864a34",
+          "clean": true,
+          "commit": "9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18",
+          "containerfileSha256": "c0b85b1547d5ce683531ef1602b98d2a08056464eb74ead0f9037e13aa136d92"
+        },
+        "status": "passed",
+        "toolchain": {
+          "cargo": "cargo 1.93.1 (083ac5135 2025-12-15)",
+          "requested": "1.93.1",
+          "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11)\nbinary: rustc\ncommit-hash: 01f6ddf7588f42ae2d7eb0a2f21d44e8e96674cf\ncommit-date: 2026-02-11\nhost: aarch64-unknown-linux-gnu\nrelease: 1.93.1\nLLVM version: 21.1.8"
+        }
+      },
+      "manifestSha256": "90ed90dccdbedb81d8b0df71c10fa439f31aadedab1c96b607eedeab64a8f5a1",
+      "testsPassed": 46,
+      "verificationSummarySha256": "8e6eac3e335ba4b297750d61bcacc4cd7cb222e41f24ec86d5f61a8f5f4e3022"
+    },
+    {
+      "artifact": {
+        "created_at": "2026-11-19T19:38:17Z",
+        "digest": "sha256:6dfa0466f82b9ec191b54c0547d175f2554b92814cc5320b6b9d99e216f1dfcd",
+        "expires_at": "2026-12-03T19:38:16Z",
+        "id": 14567463120,
+        "name": "linux-package-9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18-44599536091-1-amd64-builder-1.93.1",
+        "size_in_bytes": 1864
+      },
+      "cleanup": {
+        "ownedContainersRemaining": 0,
+        "passed": true
+      },
+      "committedProofByteMatch": true,
+      "manifest": {
+        "captureImage": "sha256:0f0718948a34067c18ad327967e703a8412f6c5b2ec6d324ca55163eaf35a229",
+        "cleanup": {
+          "passed": true
+        },
+        "docker": {
+          "client": "28.0.4",
+          "server": "28.0.4"
+        },
+        "kind": "native-package",
+        "native": {
+          "machine": "x86_64",
+          "platform": "linux/amd64",
+          "runnerArch": "X64",
+          "system": "Linux"
+        },
+        "outcomes": {
+          "admission": true,
+          "capture": true,
+          "cli": true,
+          "native": true,
+          "proof": true,
+          "source": true,
+          "sourceFinal": true,
+          "tamper": true,
+          "worker": true
+        },
+        "policy": {
+          "catalogSha256": "493372f14bbd5db95ee05d997d052990aff0c787d9336fa9d95ac5049f9cc9d1",
+          "cliSha256": "12eb3e81114588aca3b7998f4f19e8997b056aca08e57a7ca7c8a3ec8c652aad",
+          "controlsSha256": "4a34aab4c764dfb93b330c89b3c5bf0e9abd5f096225e6e0f9f66df33ff47193"
+        },
+        "proof": {
+          "cases": 44,
+          "models": 8,
+          "providerInference": false,
+          "refusals": 6,
+          "resume": true,
+          "sha256": "db8557b9f852583002397827c28e8f76078f02d4aabbfad2aecfe6617ab20c58"
+        },
+        "python": {
+          "index": "docker.io/library/python@sha256:a83ba18aef0f865b1a4a611c2cf460fe446f2795673bbb9fe43be570439e3b39",
+          "manifest": "sha256:e8c69d86735f6df3efa06b324694fe51f0422785f83a3bd463052636c2421944"
+        },
+        "source": {
+          "cargoLockSha256": "1c70ff10992b000c93232155ca0032cab9b7a6c27a13ca4ac46eba862e864a34",
+          "clean": true,
+          "commit": "9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18",
+          "containerfileSha256": "c0b85b1547d5ce683531ef1602b98d2a08056464eb74ead0f9037e13aa136d92"
+        },
+        "status": "passed",
+        "workerImage": "sha256:412bb4a7d3c95470f2ea36190ebfc752287275bbb17eeb5c7da511f7eb9d1434"
+      },
+      "manifestSha256": "a80faba62536f33eba526ffc328938d65e5401a0f8b54d330eef3fd45cfd84d6"
+    },
+    {
+      "artifact": {
+        "created_at": "2026-11-19T19:37:40Z",
+        "digest": "sha256:72cdc85f588161e34d2afd3a179392c8941498cbb5e0661ce2f6e2db283b30f1",
+        "expires_at": "2026-12-03T19:37:39Z",
+        "id": 14567198226,
+        "name": "linux-package-9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18-44599536091-1-arm64-builder-1.93.1",
+        "size_in_bytes": 1867
+      },
+      "cleanup": {
+        "ownedContainersRemaining": 0,
+        "passed": true
+      },
+      "committedProofByteMatch": true,
+      "manifest": {
+        "captureImage": "sha256:8d99fb7102151bbe922f14432f1e8384006cc341f5b0598b6397738729f4eaec",
+        "cleanup": {
+          "passed": true
+        },
+        "docker": {
+          "client": "28.0.4",
+          "server": "28.0.4"
+        },
+        "kind": "native-package",
+        "native": {
+          "machine": "aarch64",
+          "platform": "linux/arm64",
+          "runnerArch": "ARM64",
+          "system": "Linux"
+        },
+        "outcomes": {
+          "admission": true,
+          "capture": true,
+          "cli": true,
+          "native": true,
+          "proof": true,
+          "source": true,
+          "sourceFinal": true,
+          "tamper": true,
+          "worker": true
+        },
+        "policy": {
+          "catalogSha256": "493372f14bbd5db95ee05d997d052990aff0c787d9336fa9d95ac5049f9cc9d1",
+          "cliSha256": "50b06603bdcdac39b714f5c3e68583c002b8ad8779ebfdaaf4932ff016b379c0",
+          "controlsSha256": "4a34aab4c764dfb93b330c89b3c5bf0e9abd5f096225e6e0f9f66df33ff47193"
+        },
+        "proof": {
+          "cases": 44,
+          "models": 8,
+          "providerInference": false,
+          "refusals": 6,
+          "resume": true,
+          "sha256": "91ab6c55e22236a578b494f071bbd82ce867a2e9aae4010526b7319165344169"
+        },
+        "python": {
+          "index": "docker.io/library/python@sha256:a83ba18aef0f865b1a4a611c2cf460fe446f2795673bbb9fe43be570439e3b39",
+          "manifest": "sha256:464bee9ac10a34b0c86031f12d94d7ccc4643725773b23eff4076305fafab420"
+        },
+        "source": {
+          "cargoLockSha256": "1c70ff10992b000c93232155ca0032cab9b7a6c27a13ca4ac46eba862e864a34",
+          "clean": true,
+          "commit": "9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18",
+          "containerfileSha256": "c0b85b1547d5ce683531ef1602b98d2a08056464eb74ead0f9037e13aa136d92"
+        },
+        "status": "passed",
+        "workerImage": "sha256:205fe386a36a4de66a2e08bc2b104b5897ffba20a8c0274b1c36b681dbb882ee"
+      },
+      "manifestSha256": "8d47ef7934da0a0f60a95641bfaef9662203b186727cc773b1fd37391d8e1c8b"
+    }
+  ],
+  "governingSpecification": ".ai/specs/how/linux-worker-acceptance.md",
+  "jobs": [
+    {
+      "completedAt": "2026-11-19T19:35:14Z",
+      "conclusion": "success",
+      "name": "Native amd64 Rust 1.93.1",
+      "startedAt": "2026-11-19T19:33:28Z",
+      "url": "https://github.com/thoughtkhoral/thought-khoral-codex-agent/actions/runs/44599536091/job/135826846794"
+    },
+    {
+      "completedAt": "2026-11-19T19:34:55Z",
+      "conclusion": "success",
+      "name": "Native arm64 Rust 1.93.1",
+      "startedAt": "2026-11-19T19:33:30Z",
+      "url": "https://github.com/thoughtkhoral/thought-khoral-codex-agent/actions/runs/44599536091/job/135826847178"
+    },
+    {
+      "completedAt": "2026-11-19T19:35:04Z",
+      "conclusion": "success",
+      "name": "Native amd64 Rust 1.85.0",
+      "startedAt": "2026-11-19T19:33:28Z",
+      "url": "https://github.com/thoughtkhoral/thought-khoral-codex-agent/actions/runs/44599536091/job/135826847389"
+    },
+    {
+      "completedAt": "2026-11-19T19:35:18Z",
+      "conclusion": "success",
+      "name": "Native arm64 Rust 1.85.0",
+      "startedAt": "2026-11-19T19:33:30Z",
+      "url": "https://github.com/thoughtkhoral/thought-khoral-codex-agent/actions/runs/44599536091/job/135826847491"
+    },
+    {
+      "completedAt": "2026-11-19T19:37:43Z",
+      "conclusion": "success",
+      "name": "Native arm64 package and CLI capture",
+      "startedAt": "2026-11-19T19:35:23Z",
+      "url": "https://github.com/thoughtkhoral/thought-khoral-codex-agent/actions/runs/44599536091/job/135828012072"
+    },
+    {
+      "completedAt": "2026-11-19T19:38:19Z",
+      "conclusion": "success",
+      "name": "Native amd64 package and CLI capture",
+      "startedAt": "2026-11-19T19:35:20Z",
+      "url": "https://github.com/thoughtkhoral/thought-khoral-codex-agent/actions/runs/44599536091/job/135828012075"
+    }
+  ],
+  "reviewDate": "2026-11-19",
+  "run": {
+    "conclusion": "success",
+    "headSha": "9bcdbde61b59b99ad1e47d5fbb8644adf1e77c18",
+    "status": "completed",
+    "url": "https://github.com/thoughtkhoral/thought-khoral-codex-agent/actions/runs/44599536091"
+  },
+  "runId": 44599536091,
+  "scope": "Native Linux worker build, package and synthetic CLI-policy acceptance only; no provider inference, room stack, browser, release or production claim."
+}
