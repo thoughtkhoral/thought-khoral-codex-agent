@@ -12,6 +12,11 @@ Derived from the [local specification index](../.ai/specs/README.md) and
 The cited tests retain their original source identities; this documentation
 refresh adds no activation, publication or runtime acceptance.
 
+The current [documentation requirements](../.ai/specs/what/public-documentation.md)
+cover the implemented worker and the maintained page/source map below. Original
+scaffold-only documentation criteria are superseded; exact runtime and native
+acceptance identities remain unchanged.
+
 These are maintained Markdown documents derived from specifications, following
 the pattern used by the other ThoughtKhoral projects. CI checks them; it does
 not generate them or rewrite their sources.
