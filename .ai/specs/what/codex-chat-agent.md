@@ -10,8 +10,9 @@ The approval establishes the intended behavior below; it does not assert that
 the runtime was already complete. The current experimental implementation,
 evidence, and remaining Task 9 gates are summarized in the [project status guide](../../../docs/project-status.md)
 and detailed in the [coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md).
-The v1.1 contract has no release or tag, and packaged-stack acceptance, live
-provider verification, and service activation remain separate gates.
+The v1.1 contract is published and downloaded bytes verified. Released consumers
+and a packaged profile are verified on local branches; packaged-stack/browser
+acceptance, live provider verification and service activation remain separate.
 
 ## Purpose
 

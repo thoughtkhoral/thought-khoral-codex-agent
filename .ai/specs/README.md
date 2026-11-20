@@ -1,5 +1,19 @@
 # ThoughtKhoral Codex agent specifications
 
+## Current workspace state — 2026-11-20
+
+Native AMD64/ARM64 worker acceptance remains tied to tested source `9bcdbde` and its final lock. The 2026-11-20 provider-free ARM64 image from source `3f0318b` passed ten package/startup probes and exact native policy recapture: 44 model/effort cases, eight models, resume and six refusals. Published contract v1.1 and locally prepared released consumers/profile do not add provider, assembled-stack, browser, registry-image or production acceptance. Worker/mediator v1.0 pins remain compatible and unchanged.
+
+Runtime source and contract pins are unchanged. Exact clean pinned-source
+snapshots were retained before this documentation-only checkout advanced.
+
+See the [root workspace authority](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/workspace-state.md) for exact source/release
+identities, preserved source snapshots and remaining gates. Documentation-only
+HEADs are not substitutions for frozen acceptance commits. Earlier dated
+checkpoints retain their historical evidence. Required worker host checks were
+run separately during this refresh; they do not extend native/package/live
+acceptance or change runtime bytes.
+
 Specifications are the source of truth for implementation and documentation.
 Parent requirements in the [root specification index](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/README.md)
 apply here. Overrides require an accepted local decision identifying the parent
@@ -18,7 +32,7 @@ The integration was pushed to the owning GitHub `main` branches on 2026-10-07.
 The Task 8 pinned-worker tool-policy correction and Task 9 worker recovery fix are
 in this repository's pushed history. The F1 correction and visible defaults
 discovery passed provider-free composed verification. The v1.1 contract release
-artifact remains unpublished; packaged-stack and separately authorized live
+artifact is now published; packaged-stack and separately authorized live
 verification remain pending. This remains an experimental POC, not a production
 readiness claim.
 
