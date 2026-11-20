@@ -1,5 +1,17 @@
 # ThoughtKhoral Codex agent
 
+## Current workspace context — 2026-11-20
+
+Native AMD64/ARM64 worker acceptance remains tied to tested source `9bcdbde` and its final lock. The 2026-11-20 provider-free ARM64 image from source `3f0318b` passed ten package/startup probes and exact native policy recapture: 44 model/effort cases, eight models, resume and six refusals. Published contract v1.1 and locally prepared released consumers/profile do not add provider, assembled-stack, browser, registry-image or production acceptance. Worker/mediator v1.0 pins remain compatible and unchanged.
+
+Runtime source and contract pins are unchanged. Exact clean pinned-source
+snapshots were retained before this documentation-only checkout advanced.
+
+Derived from the [local specification index](.ai/specs/README.md) and
+[root workspace authority](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/workspace-state.md).
+The cited tests retain their original source identities; this documentation
+refresh adds no activation, publication or runtime acceptance.
+
 An independent Codex agent for the ThoughtKhoral collaborative workspace.
 The runtime wraps headless Codex and communicates through the agent
 gateway; it does not access room storage directly.
@@ -11,8 +23,8 @@ The adapter/worker, broker, mediator, UI, and opt-in platform candidates were
 reviewed and pushed on 2026-10-07; exact commits and evidence are in the
 [coordinated plan](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/codex-room-conversations-implementation-plan.md).
 The F1 UI correction and visible defaults discovery passed provider-free
-synthetic verification. The v1.1 candidate source is on `main`, but no v1.1
-release or tag exists; packaged-stack and separately authorized live
+synthetic verification. The v1.1 artifact is published at `f1c8621`, and the
+released consumers/profile are verified locally. Packaged-stack and separately authorized live
 verification remain pending. This is experimental POC code, not a production
 readiness claim. The milestone-one specifications and coordinated plan were
 approved on 2026-10-05 under
@@ -63,7 +75,7 @@ CI runs the runtime and documentation checks on pushes and pull requests.
 
 The [contracts repository](https://github.com/thoughtkhoral/thought-khoral-contracts)
 owns cross-project compatibility. This runtime pins the published v1.0 profile;
-the reviewed v1.1 defaults candidate remains unreleased. Synthetic tests do not
+v1.1 defaults is published, with released consumers/profile verified locally. Synthetic tests do not
 establish packaged deployment or live interoperability. The existing Reference
 Agent remains independent; general bring-your-own-agent onboarding is future work.
 

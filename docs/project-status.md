@@ -1,6 +1,18 @@
 # Codex worker component status
 
-**Status as of 2026-11-19: experimental provider-free POC.** This page covers
+## Current workspace context — 2026-11-20
+
+Native AMD64/ARM64 worker acceptance remains tied to tested source `9bcdbde` and its final lock. The 2026-11-20 provider-free ARM64 image from source `3f0318b` passed ten package/startup probes and exact native policy recapture: 44 model/effort cases, eight models, resume and six refusals. Published contract v1.1 and locally prepared released consumers/profile do not add provider, assembled-stack, browser, registry-image or production acceptance. Worker/mediator v1.0 pins remain compatible and unchanged.
+
+Runtime source and contract pins are unchanged. Exact clean pinned-source
+snapshots were retained before this documentation-only checkout advanced.
+
+Derived from the [local specification index](../.ai/specs/README.md) and
+[root workspace authority](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/workspace-state.md).
+The cited tests retain their original source identities; this documentation
+refresh adds no activation, publication or runtime acceptance.
+
+**Status as of 2026-11-20: experimental provider-free POC.** This page covers
 the Codex worker owned by this repository. For the end-to-end goal, project
 responsibilities, evidence limits, remaining milestone-one gates, and the later
 specification/memory-guided milestone, read the [cross-project ThoughtKhoral
