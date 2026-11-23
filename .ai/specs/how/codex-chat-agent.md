@@ -922,3 +922,44 @@ claims open until real jobs pass. Publication and CI were subsequently authorize
 all six native Linux jobs passed at `9bcdbde`, with reviewed source/lock, exact
 CLI proof and cleanup evidence retained in that How. Local service activation,
 Task 9, browser/live and release acceptance remain separate.
+
+
+## Approved Task 9 native startup compatibility — 2026-11-23
+
+The maintainer approved the bounded [root correction proposal](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/task9-runtime-compatibility-proposal-2026-11-23.md)
+on 2026-11-23; its [execution record](https://github.com/thoughtkhoral/thought-khoral/blob/main/.ai/specs/how/task9-integration-2026-11-23.md)
+retains the activation failure. This authorizes local implementation and
+provider-free verification, with no What or public-contract expansion.
+
+Native CLI 0.160.0 server notifications may contain optional `emittedAtMs` as
+pinned in `ServerNotification`: a bounded signed 64-bit JSON integer, never a
+string, fraction, null or metadata on a response/client request. Keep envelopes
+closed to other keys and retain all existing byte/depth/output limits. This
+metadata has no room-order, context-authority, settings or receipt semantics.
+
+Both catalog discovery and conversation processing must validate and explicitly
+dispose of `configWarning` and `remoteControl/status/changed` using their pinned
+parameter schemas plus closed parameter fields. Accept only the exact known
+bundled-bubblewrap fallback warning with absent/null optional details, path and
+range; any other warning, including unsupported security controls, fails closed.
+Accept remote control only in `disabled` state with no environment binding.
+Keep warning text, paths and installation identifiers private: do not log or
+publish their contents. Existing private credential-filtered stderr bounds stay
+unchanged. Unknown notifications, client/tool requests, malformed metadata,
+extra fields, unexpected identities and unsupported controls remain rejected.
+Catalog discovery must not silently queue and ignore unhandled notifications.
+
+Keep the CLI, fixed catalog/tool controls, no-tools policy, read-only workspace,
+service-owned native home, authentication, credential isolation, model defaults,
+limits, recovery and public APIs unchanged. Do not import host config/sessions.
+
+Required verification: first demonstrate RED then GREEN for a synthetic
+real-shape timestamped startup sequence in catalog and turn paths, and negative
+metadata, extra-field, schema, remote-state, unknown-method/tool-request and
+security-warning cases. Run all AGENTS.md checks. Separately, the root executor
+must prove actual initialize/model-list through this adapter in a network-none
+production-image fixture, rebuild the immutable ARM64 image from clean final
+source and repeat package/native-policy checks without provider/model requests.
+Synthetic tests alone do not close this regression or Task 9. Prior native
+AMD64/MSRV evidence remains attributable only to its original tested source.
+Source/image publication and changed-input activation retain separate approval.
