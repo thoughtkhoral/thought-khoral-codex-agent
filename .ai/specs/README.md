@@ -1,5 +1,17 @@
 # ThoughtKhoral Codex agent specifications
 
+## Local Task 9 runtime compatibility correction — 2026-11-23
+
+The approved [runtime How](how/codex-chat-agent.md#approved-task-9-native-startup-compatibility--2026-11-23)
+adds bounded native notification metadata and explicit startup dispositions for
+catalog/turn processing. Local synthetic adapter regressions do not establish
+actual production-image catalog success; that network-none adapter/package
+verification remains a separate root execution step. CLI, contract pins, fixed
+catalog, controls, defaults and credential boundaries remain unchanged.
+Publication, changed-input activation, packaged-stack/browser/live acceptance
+and Task 9 remain open. The historical evidence below applies to its named
+sources and is not acceptance of this runtime correction.
+
 ## Current workspace state — 2026-11-20
 
 Native AMD64/ARM64 worker acceptance remains tied to tested source `9bcdbde` and its final lock. The 2026-11-20 provider-free ARM64 image from source `3f0318b` passed ten package/startup probes and exact native policy recapture: 44 model/effort cases, eight models, resume and six refusals. Published contract v1.1 and locally prepared released consumers/profile do not add provider, assembled-stack, browser, registry-image or production acceptance. Worker/mediator v1.0 pins remain compatible and unchanged.

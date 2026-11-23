@@ -458,3 +458,96 @@ async fn bound_reroute_and_compaction_invalidate_usage_without_changing_selectio
         server.close().await.unwrap();
     }
 }
+
+// These exercise the adapter against a synthetic external process, not a native
+// CLI/package acceptance test. Rejecting pinned startup metadata breaks success;
+// broad warning/remote exemptions would break the refusal cases below.
+#[tokio::test]
+async fn timestamped_native_startup_sequence_succeeds_in_catalog() {
+    for variant in ["valid", "without_timestamp", "negative_timestamp"] {
+        let fixture = Fixture::new(&format!("startup:{variant}"));
+        let mut server = AppServer::spawn(fixture.config.clone()).await.unwrap();
+        let catalog = server.catalog().await.expect("pinned startup catalog");
+        assert!(!catalog.to_string().contains("synthetic-installation"));
+        assert!(!catalog.to_string().contains("bubblewrap"));
+        server.close().await.unwrap();
+    }
+}
+
+#[tokio::test]
+async fn timestamped_native_startup_sequence_succeeds_in_turn() {
+    for variant in ["valid", "without_timestamp", "negative_timestamp"] {
+        for phase in ["startup", "turn_startup"] {
+            let fixture = Fixture::new(&format!("{phase}:{variant}"));
+            let mut server = AppServer::spawn(fixture.config.clone()).await.unwrap();
+            let outcome = server
+                .execute(request(), |_| async { Ok(()) })
+                .await
+                .expect("pinned startup turn");
+            assert_eq!(outcome.reply["assistantText"], "Maya proposed green.");
+            assert!(!outcome.reply.to_string().contains("synthetic-installation"));
+            assert!(!outcome.reply.to_string().contains("bubblewrap"));
+            server.close().await.unwrap();
+        }
+    }
+}
+
+#[tokio::test]
+async fn startup_metadata_warnings_remote_states_and_requests_fail_closed() {
+    for variant in [
+        "security_warning",
+        "warning_details",
+        "warning_path",
+        "warning_type",
+        "warning_extra",
+        "remote_connecting",
+        "remote_connected",
+        "remote_errored",
+        "remote_unknown",
+        "remote_missing",
+        "remote_extra",
+        "environment",
+        "timestamp_string",
+        "timestamp_fraction",
+        "timestamp_boolean",
+        "warning_range",
+        "unknown_without_timestamp",
+        "timestamp_null",
+        "timestamp_overflow",
+        "extra_envelope",
+        "unknown",
+        "client_request",
+        "tool_request",
+    ] {
+        let fixture = Fixture::new(&format!("startup:{variant}"));
+        let mut server = AppServer::spawn(fixture.config.clone()).await.unwrap();
+        assert!(
+            server.catalog().await.is_err(),
+            "catalog accepted {variant}"
+        );
+        server.close().await.unwrap();
+        for phase in ["startup", "turn_startup"] {
+            let fixture = Fixture::new(&format!("{phase}:{variant}"));
+            let mut server = AppServer::spawn(fixture.config.clone()).await.unwrap();
+            assert!(
+                server
+                    .execute(request(), |_| async { Ok(()) })
+                    .await
+                    .is_err(),
+                "turn accepted {phase}:{variant}"
+            );
+            server.close().await.unwrap();
+        }
+    }
+}
+
+#[tokio::test]
+async fn server_notification_timestamp_is_not_accepted_on_responses() {
+    let fixture = Fixture::new("timestamp_response");
+    let mut server = AppServer::spawn(fixture.config.clone()).await.unwrap();
+    assert_eq!(
+        server.catalog().await.unwrap_err(),
+        RuntimeError::RuntimeUnavailable
+    );
+    server.close().await.unwrap();
+}

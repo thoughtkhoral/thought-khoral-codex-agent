@@ -278,6 +278,12 @@ impl AppServer {
                 if message.get("id").is_some() {
                     return Err(RuntimeError::ExecutionFailed);
                 }
+                if startup_notification(&message)? {
+                    continue;
+                }
+                if matches!(method, "initialize" | "model/list") {
+                    return Err(RuntimeError::RuntimeUnavailable);
+                }
                 self.pending.push_back(message);
                 continue;
             }
@@ -477,6 +483,9 @@ impl AppServer {
             envelope(&event)?;
             if event.get("id").is_some() {
                 return Err(RuntimeError::ExecutionFailed);
+            }
+            if startup_notification(&event)? {
+                continue;
             }
             let method = event["method"]
                 .as_str()
@@ -739,7 +748,7 @@ fn envelope(value: &Value) -> Result<(), RuntimeError> {
     if map.keys().any(|key| {
         !matches!(
             key.as_str(),
-            "id" | "result" | "error" | "method" | "params" | "jsonrpc"
+            "id" | "result" | "error" | "method" | "params" | "jsonrpc" | "emittedAtMs"
         )
     }) || value.get("jsonrpc").is_some_and(|version| version != "2.0")
         || ((value.get("result").is_some() as u8
@@ -749,7 +758,54 @@ fn envelope(value: &Value) -> Result<(), RuntimeError> {
     {
         return Err(RuntimeError::RuntimeUnavailable);
     }
+    if let Some(timestamp) = value.get("emittedAtMs") {
+        // ServerNotification defines int64 metadata; responses and requests do
+        // not carry it. Preserve the JSON integer representation (no coercion).
+        if value.get("id").is_some()
+            || value.get("method").and_then(Value::as_str).is_none()
+            || timestamp.as_i64().is_none()
+        {
+            return Err(RuntimeError::RuntimeUnavailable);
+        }
+    }
     Ok(())
+}
+
+// Only the reviewed bundled fallback is informational under the fixed package
+// policy. Never publish native diagnostic text or remote installation identity.
+fn startup_notification(event: &Value) -> Result<bool, RuntimeError> {
+    let params = &event["params"];
+    let (schema, fields): (&str, &[&str]) = match event["method"].as_str() {
+        Some("configWarning") => (
+            "ConfigWarningNotification",
+            &["summary", "details", "path", "range"],
+        ),
+        Some("remoteControl/status/changed") => (
+            "RemoteControlStatusChangedNotification",
+            &["installationId", "serverName", "status", "environmentId"],
+        ),
+        _ => return Ok(false),
+    };
+    validate_native(schema, params)?;
+    if params
+        .as_object()
+        .is_none_or(|map| map.keys().any(|key| !fields.contains(&key.as_str())))
+    {
+        return Err(RuntimeError::RuntimeUnavailable);
+    }
+    let supported = if schema == "ConfigWarningNotification" {
+        params["summary"]
+            == "Codex could not find bubblewrap on PATH. Install bubblewrap with your OS package manager. See the sandbox prerequisites: https://developers.openai.com/codex/concepts/sandboxing#prerequisites. Codex will use the bundled bubblewrap in the meantime."
+            && ["details", "path", "range"]
+                .iter()
+                .all(|field| params[*field].is_null())
+    } else {
+        params["status"] == "disabled" && params["environmentId"].is_null()
+    };
+    if !supported {
+        return Err(RuntimeError::RuntimeUnavailable);
+    }
+    Ok(true)
 }
 fn forbidden_item(item: &Value) -> bool {
     !matches!(

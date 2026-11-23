@@ -16,7 +16,10 @@ def emit(value):
     print(json.dumps(value, ensure_ascii=False), flush=True)
 
 def response(request, value):
-    emit({'id': request['id'], 'result': value})
+    result = {'id': request['id'], 'result': value}
+    if args.scenario == 'timestamp_response':
+        result['emittedAtMs'] = 1
+    emit(result)
 
 def note(method, params):
     if method == 'item/completed':
@@ -28,6 +31,59 @@ def turn(status='inProgress', items=None):
 
 def model(id='model-a', name='gpt-6.1-sol'):
     return {'id': id, 'model': name, 'displayName': 'Synthetic model', 'description': 'Synthetic catalog', 'hidden': False, 'isDefault': True, 'defaultReasoningEffort': 'medium', 'supportedReasoningEfforts': [{'reasoningEffort': 'medium', 'description': 'Synthetic medium'}, {'reasoningEffort': 'high', 'description': 'Synthetic high'}]}
+def startup_notifications():
+    warning = {'method': 'configWarning', 'params': {'summary': 'Codex could not find bubblewrap on PATH. Install bubblewrap with your OS package manager. See the sandbox prerequisites: https://developers.openai.com/codex/concepts/sandboxing#prerequisites. Codex will use the bundled bubblewrap in the meantime.', 'details': None}, 'emittedAtMs': 1795440000000}
+    remote = {'method': 'remoteControl/status/changed', 'params': {'installationId': 'synthetic-installation', 'serverName': 'synthetic-server', 'status': 'disabled'}, 'emittedAtMs': 1795440000001}
+    variant = args.scenario.split(':')[-1]
+    if variant == 'security_warning':
+        warning['params']['summary'] = 'Sandbox security controls are unsupported'
+    elif variant == 'warning_details':
+        warning['params']['details'] = 'Unsupported security controls'
+    elif variant == 'warning_path':
+        warning['params']['path'] = '/synthetic/config.toml'
+    elif variant == 'warning_type':
+        warning['params']['summary'] = 42
+    elif variant == 'warning_extra':
+        warning['params']['securityDisabled'] = True
+    elif variant in ('remote_connecting', 'remote_connected', 'remote_errored', 'remote_unknown'):
+        remote['params']['status'] = variant.removeprefix('remote_')
+    elif variant == 'remote_missing':
+        del remote['params']['installationId']
+    elif variant == 'remote_extra':
+        remote['params']['extra'] = True
+    elif variant == 'environment':
+        remote['params']['environmentId'] = 'synthetic-environment'
+    elif variant == 'timestamp_string':
+        warning['emittedAtMs'] = '1795440000000'
+    elif variant == 'timestamp_fraction':
+        warning['emittedAtMs'] = 1.5
+    elif variant == 'timestamp_null':
+        warning['emittedAtMs'] = None
+    elif variant == 'timestamp_overflow':
+        warning['emittedAtMs'] = 9223372036854775808
+    elif variant == 'extra_envelope':
+        warning['extra'] = True
+    elif variant == 'unknown':
+        warning['method'] = 'unknown/notification'
+    elif variant == 'unknown_without_timestamp':
+        warning['method'] = 'unknown/notification'
+        del warning['emittedAtMs']
+    elif variant == 'timestamp_boolean':
+        warning['emittedAtMs'] = True
+    elif variant == 'warning_range':
+        warning['params']['range'] = {'start': {'line': 1, 'character': 0}, 'end': {'line': 1, 'character': 1}}
+    elif variant == 'client_request':
+        warning['id'] = 'synthetic-client-request'
+    elif variant == 'tool_request':
+        warning.update({'id': 'synthetic-tool', 'method': 'item/tool/call'})
+    elif variant == 'without_timestamp':
+        del warning['emittedAtMs']
+        del remote['emittedAtMs']
+    elif variant == 'negative_timestamp':
+        warning['emittedAtMs'] = -1
+    emit(warning)
+    emit(remote)
+
 initialized = False
 thread_id = 'thread-exact'
 for line in sys.stdin:
@@ -41,6 +97,8 @@ for line in sys.stdin:
         response(request, {'userAgent': 'codex-cli/0.160.0', 'codexHome': os.environ.get('CODEX_HOME', '/synthetic'), 'platformFamily': 'unix', 'platformOs': 'linux'})
     elif method == 'initialized':
         initialized = True
+        if args.scenario.startswith('startup:'):
+            startup_notifications()
     else:
         assert initialized
         if method == 'model/list':
@@ -79,6 +137,8 @@ for line in sys.stdin:
                 emit({'id':request['id'],'error':{'code':-32000,'message':'synthetic provider denial'}})
                 continue
             response(request, {'turn': turn()})
+            if args.scenario.startswith('turn_startup:'):
+                startup_notifications()
             if args.scenario in ('hang', 'ignore_interrupt', 'descendant'):
                 if args.scenario == 'descendant':
                     child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])

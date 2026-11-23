@@ -963,3 +963,31 @@ source and repeat package/native-policy checks without provider/model requests.
 Synthetic tests alone do not close this regression or Task 9. Prior native
 AMD64/MSRV evidence remains attributable only to its original tested source.
 Source/image publication and changed-input activation retain separate approval.
+
+
+### Local synthetic verification checkpoint — 2026-11-23
+
+Before changing production code, the timestamped startup catalog and turn
+regressions both failed with `RuntimeUnavailable` (0 passed, 2 failed). After
+the correction, both succeed. The final host `cargo test --locked` run passes
+50 tests: 1 unit, 20 app-server, 5 catalog/usage, 14 receipt/recovery, 5 tool-policy
+and 5 worker-service tests. The four added app-server tests cover 9 accepted
+catalog/turn sequences, 69 rejected notification sequences and timestamped
+response refusal, including absent and signed-negative timestamps as permitted
+by the pinned schema. The warning/remote fixtures are synthetic and retain no
+real paths, credentials, remote identities or native session contents.
+
+The first sandboxed full-suite attempt stopped at the unchanged descendant
+process test because spawning `/bin/ps` returned `Operation not permitted`.
+The required unrestricted rerun passed that test and the full suite without
+changing tests, controls or limits. This is host synthetic verification only;
+the separately required actual production-image adapter catalog, immutable ARM64
+rebuild and native package/policy checks remain with root execution. No provider
+or model request, publication or changed-input activation occurred here.
+
+`cargo fmt --check`, `cargo clippy --locked --all-targets -- -D warnings`,
+contract-pin verification (144 files), dependency notices (478 retained legal
+files / 276 locked crates plus Ratatui), exact tool-catalog verification (11
+descriptors), documentation checking (164 local links) and `git diff --check`
+also pass. Pinned vendor files, Cargo.lock, CLI, controls and policy proofs were
+not modified. These results do not extend earlier native AMD64/MSRV CI evidence.

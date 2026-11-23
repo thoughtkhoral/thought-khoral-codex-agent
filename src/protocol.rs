@@ -114,6 +114,8 @@ static NATIVE: LazyLock<HashMap<&'static str, jsonschema::Validator>> = LazyLock
         "ThreadResumeResponse",
         "TurnStartResponse",
         "ModelListResponse",
+        "ConfigWarningNotification",
+        "RemoteControlStatusChangedNotification",
         "ThreadStartedNotification",
         "TurnStartedNotification",
         "ItemStartedNotification",
